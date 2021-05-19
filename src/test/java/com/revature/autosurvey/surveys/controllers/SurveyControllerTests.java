@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @ExtendWith(SpringExtension.class)
-public class SurveyControllerTests {
+class SurveyControllerTests {
 	
 	@TestConfiguration
 	static class Configuration {
@@ -53,13 +53,6 @@ public class SurveyControllerTests {
 	static void before() {
 		invalidUuid = UUID.fromString("5ec294ec-b8d5-11eb-8529-0242ac130003");
 		validUuid = UUID.fromString("186d7fd1-1aae-44f4-8755-c3ebb5d4711f");
-	}
-	
-	@Test
-	void testGetSurveyResponseIsNotNull() {
-		doReturn(Mono.empty()).when(surveyService).getByUuid(any());
-		Mono<ResponseEntity<Survey>> result = surveyController.getByUuid(validUuid);
-		Assert.notNull(result, "Response should not be null, but it is.");
 	}
 	
 	@Test

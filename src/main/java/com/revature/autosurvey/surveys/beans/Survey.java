@@ -1,6 +1,5 @@
 package com.revature.autosurvey.surveys.beans;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,7 @@ public class Survey {
 		this.description = "";
 		this.confirmation = "";
 		this.version = "";
-		this.questions = new ArrayList<Question>();
+		this.questions = new ArrayList<>();
 	}
 
 }

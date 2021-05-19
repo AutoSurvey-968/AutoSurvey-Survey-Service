@@ -21,7 +21,7 @@ public class Question {
 		this.helpText = "";
 		this.isRequired = true;
 		this.hasOtherOption = false;
-		this.choices = new ArrayList<String>();
+		this.choices = new ArrayList<>();
 	}
 	
 }
