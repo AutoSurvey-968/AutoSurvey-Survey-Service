@@ -19,7 +19,7 @@ import com.revature.autosurvey.surveys.data.SurveyRepo;
 import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
-public class SurveyServiceTests {
+class SurveyServiceTests {
 
 	@Mock
 	private static SurveyRepo repoMock;

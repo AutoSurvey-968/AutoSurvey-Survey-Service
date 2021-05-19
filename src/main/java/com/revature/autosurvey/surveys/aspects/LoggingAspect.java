@@ -23,20 +23,20 @@ public class LoggingAspect {
 		try {
 			result = pjp.proceed();
 		}  catch(Throwable t) {
-			log.error("Method threw exception: {}", t);
+			log.error("Method threw exception: {0}", t);
 			for(StackTraceElement s : t.getStackTrace()) {
 				log.warn(s.toString());
 			}
 			if(t.getCause() != null) {
 				Throwable t2 = t.getCause();
-				log.error("Method threw wrapped exception: {}", t2);
+				log.error("Method threw wrapped exception: {0}", t2);
 				for(StackTraceElement s : t2.getStackTrace()) {
 					log.warn(s.toString());
 				}
 			}
 			throw t; 
 		}
-		log.debug("Method returning with: {}", result);
+		log.debug("Method returning with: {0}", result);
 		return result;
 	}
 	
