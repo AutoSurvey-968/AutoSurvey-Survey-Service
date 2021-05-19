@@ -23,6 +23,6 @@ public class CassandraTest {
 				result = row.getString("keyspace_name");
 			}
 			
-			Assert.isTrue(result.equals("system_schema"), "Result should be schema, but instead is " + result);
+			Assert.isTrue(result.equals("system_schema"), "Result should be system_schema, but instead is " + result);
 		}
 }
