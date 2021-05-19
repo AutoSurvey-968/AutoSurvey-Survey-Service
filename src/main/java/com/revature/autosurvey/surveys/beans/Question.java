@@ -1,5 +1,6 @@
 package com.revature.autosurvey.surveys.beans;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
@@ -15,6 +16,12 @@ public class Question {
 
 	public Question() {
 		super();
+		this.questionType = QuestionType.MULTIPLE_CHOICE;
+		this.title = "";
+		this.helpText = "";
+		this.isRequired = true;
+		this.hasOtherOption = false;
+		this.choices = new ArrayList<String>();
 	}
 	
 }

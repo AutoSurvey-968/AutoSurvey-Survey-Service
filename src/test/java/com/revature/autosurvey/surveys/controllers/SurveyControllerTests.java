@@ -1,5 +1,11 @@
 package com.revature.autosurvey.surveys.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -14,6 +20,7 @@ import com.revature.autosurvey.surveys.beans.Survey;
 import com.revature.autosurvey.surveys.services.SurveyService;
 
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 @ExtendWith(SpringExtension.class)
 public class SurveyControllerTests {
@@ -39,16 +46,39 @@ public class SurveyControllerTests {
 	@Autowired 
 	private SurveyService surveyService;
 	
+	private static UUID validUuid;
+	private static UUID invalidUuid;
+	
+	@BeforeAll
+	static void before() {
+		invalidUuid = UUID.fromString("5ec294ec-b8d5-11eb-8529-0242ac130003");
+		validUuid = UUID.fromString("186d7fd1-1aae-44f4-8755-c3ebb5d4711f");
+	}
+	
 	@Test
 	void testGetSurveyResponseIsNotNull() {
-		Mono<ResponseEntity<Survey>> result = surveyController.getSurvey();
+		doReturn(Mono.empty()).when(surveyService).getByUuid(any());
+		Mono<ResponseEntity<Survey>> result = surveyController.getByUuid(validUuid);
 		Assert.notNull(result, "Response should not be null, but it is.");
 	}
 	
 	@Test
-	void testGetSurveyRespondsWithMono() {
-		Mono<ResponseEntity<Survey>> result = surveyController.getSurvey();
-		Assert.isTrue(result.getClass() == Mono.class, "Response should be a Mono, but it is not.");
+	void testGetByUuidRespondsWith404WhenServiceReturnsEmptyMono() {
+		doReturn(Mono.empty()).when(surveyService).getByUuid(any());
+		
+		Mono<ResponseEntity<Survey>> result = surveyController.getByUuid(invalidUuid);
+		
+		StepVerifier.create(result).expectNext(ResponseEntity.notFound().build()).verifyComplete();;
 	}
 	
+	@Test
+	void testGetByUuidRespondsWithSurveyWhenGivenValidUuid() {
+		Survey survey = new Survey();
+		survey.setUuid(validUuid);
+		
+		doReturn(Mono.just(survey)).when(surveyService).getByUuid(any());
+		Mono<ResponseEntity<Survey>> result = surveyController.getByUuid(validUuid);
+		
+		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
+	}
 }
