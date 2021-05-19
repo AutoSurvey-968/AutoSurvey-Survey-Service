@@ -36,7 +36,7 @@ public class LoggingAspect {
 			}
 			throw t; 
 		}
-		log.debug("Method returning with: {0}", result);
+		log.debug("Method returning with: %s", result);
 		return result;
 	}
 	
