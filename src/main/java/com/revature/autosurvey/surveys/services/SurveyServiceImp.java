@@ -1,4 +1,4 @@
-package com.revature.autosurvey.surveys.service;
+package com.revature.autosurvey.surveys.services;
 
 import org.springframework.stereotype.Service;
 
