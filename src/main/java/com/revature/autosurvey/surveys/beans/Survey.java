@@ -1,6 +1,8 @@
 package com.revature.autosurvey.surveys.beans;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +20,7 @@ public class Survey {
 	@PrimaryKeyColumn(name = "uuid", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
 	private UUID uuid;
 	@Column
-	private LocalDate createdOn;
+	private LocalDateTime createdOn;
 	@PrimaryKeyColumn(
 			name="title",
 			ordinal=1,
@@ -35,6 +37,13 @@ public class Survey {
 
 	public Survey() {
 		super();
+		this.uuid = UUID.randomUUID();
+		this.createdOn = LocalDateTime.now();
+		this.title = "";
+		this.description = "";
+		this.confirmation = "";
+		this.version = "";
+		this.questions = new ArrayList<Question>();
 	}
 
 }
