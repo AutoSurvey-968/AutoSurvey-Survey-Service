@@ -18,7 +18,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 
 @Configuration
-@EnableCassandraRepositories(basePackages = {"com.revature.autosurvey.surveys.repo"})
+@EnableCassandraRepositories(basePackages = { "com.revature.autosurvey.surveys.repo" })
 public class CassandraConfig {
 
 	@Bean
@@ -44,8 +44,7 @@ public class CassandraConfig {
 
 	@Bean
 	public CassandraMappingContext mappingContext(CqlSession cqlSession) {
-		CassandraMappingContext mappingContext = new CassandraMappingContext();
-		return mappingContext;
+		return new CassandraMappingContext();
 	}
 
 	@Bean
