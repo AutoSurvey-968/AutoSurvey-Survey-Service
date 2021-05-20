@@ -16,26 +16,16 @@
 #""
 ## (Comments)
 #Sample Feature Definition Template
-@survey-get
+@survey-post
 Feature: 
-		GET /surveys - returns array of every survey as JSON
-		GET /surveys/:id - returns single survey as JSON
-		
-		Background:
-		* url "http://localhost:8081"
-
-## Assuming our path is "http://localhost:8080"
-  @get_all_surveys
-  Scenario: return an array of all surveys
-    Given path "surveys"
-    When method GET
-    Then status 200
-    And match response contains { id: '#(id)', name: 'Scooby' }
-
-  
-  @get_survey_by_id
-  Scenario: Take in an ID, return the survey
-    Given path "surveys", id
-    When method GET
-    Then status 200
-    And match response == { id: '#(id)', name: 'Scooby' }
+POST /surveys - creates new survey via JSON
+Background:
+    * def kittens = read('test.json')
+    * url "http://localhost:8081"
+  @create_new_survey
+  Scenario: Take in JSON object, Create a new survey
+   Given path "surveys"
+   And request kittens
+    When method POST
+    Then status 201
+    And match response contains { title: 'This is a second title' }

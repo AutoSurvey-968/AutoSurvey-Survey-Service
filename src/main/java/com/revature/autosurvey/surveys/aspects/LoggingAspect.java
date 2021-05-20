@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 public class LoggingAspect {
-	
+
 	@Around("everything()")
 	public Object log(ProceedingJoinPoint pjp) throws Throwable {
 		Object result = null;
@@ -22,26 +22,27 @@ public class LoggingAspect {
 		log.debug("with arguments: {}", Arrays.toString(pjp.getArgs()));
 		try {
 			result = pjp.proceed();
-		}  catch(Throwable t) {
+		} catch (Throwable t) {
 			log.error("Method threw exception: {0}", t);
-			for(StackTraceElement s : t.getStackTrace()) {
+			for (StackTraceElement s : t.getStackTrace()) {
 				log.warn(s.toString());
 			}
-			if(t.getCause() != null) {
+			if (t.getCause() != null) {
 				Throwable t2 = t.getCause();
 				log.error("Method threw wrapped exception: {0}", t2);
-				for(StackTraceElement s : t2.getStackTrace()) {
+				for (StackTraceElement s : t2.getStackTrace()) {
 					log.warn(s.toString());
 				}
 			}
-			throw t; 
+			throw t;
 		}
 		log.debug("Method returning with: %s", result);
 		return result;
 	}
-	
-	// hook - a method that only exists as the target for an annotation
-	@Pointcut("execution( * com.revature.autosurvey.surveys..*(..) )")
-	private void everything() { /* Empty method for hook */ }
-}
 
+	// hook - a method that only exists as the target for an annotation
+	@Pointcut("execution( * com.revature.autosurvey.surveys..*(..) )"
+			+ "&& !execution( * com.revature.autosurvey.surveys.karate..*(..) )")
+	private void everything() {
+		/* Empty method for hook */ }
+}
