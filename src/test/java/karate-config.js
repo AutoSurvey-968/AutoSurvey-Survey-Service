@@ -5,8 +5,8 @@ function fn() {
     env = 'dev'; // a custom 'intelligent' default
   }
   var config = { // base config JSON
-    appId: 'submissionservice',
-    submissionUrl: 'http://localhost:8080/submission'
+    appId: 'surveyservice',
+    submissionUrl: 'http://localhost:8081/surveys'
   };
   // don't waste time waiting for a connection or if servers don't respond within 5 seconds
   karate.configure('connectTimeout', 5000);

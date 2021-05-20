@@ -21,21 +21,6 @@ Feature: DELETE /surveys - deletes survey
 
   @delete_survey
   Scenario: Take in an ID, put the data into the db
-   Given ## we have an id
+   Given path "surveys", id
     When method DELETE
     Then status 204
-    And ## other requirements
-    	| name  | value |
-      | name1 |       |
-      | name2 |       |
-
-  @tag2
-  Scenario Outline: Title of your scenario outline
-    Given I want to write a step with <name>
-    When I check for the <value> in step
-    Then I verify the <status> in step
-
-    Examples: 
-      | name  | value | status  |
-      | name1 |     5 | success |
-      | name2 |     7 | Fail    |

@@ -18,13 +18,12 @@
 #Sample Feature Definition Template
 @survey-patch
 Feature: PATCH /surveys/:id - partially updates survey via JSON (eg: fixing a typo in a question)
-
+def id = 1
   @patch_survey
   Scenario: Take in an ID, patch the data into the db
-   Given path <name>
+  Given path "surveys", id
     And ## we have json
     When method PATCH
-     And <value>
     Then status 200
     And ## other requirements
     	| name  | value |

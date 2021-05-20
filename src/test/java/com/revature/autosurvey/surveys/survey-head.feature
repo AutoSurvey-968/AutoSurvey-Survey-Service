@@ -22,19 +22,13 @@ Feature: HEAD /surveys - returns header of GET /surveys
 
    @get_all_surveys_head
   Scenario: return an array of all surveys
-    Given ## we have json
+    Given path "surveys"
     When method HEAD
     Then status 200
-    And ## other requirements
   
   @get_survey_by_id
   Scenario: Take in an ID, return the survey
-    Given path <name>
+    Given path "surveys", id
     And ## we have json
     When method HEAD
-    And <value>
     Then status 200
-    And ## other requirements
-    	| name  | value |
-      | name1 |       |
-      | name2 |       |

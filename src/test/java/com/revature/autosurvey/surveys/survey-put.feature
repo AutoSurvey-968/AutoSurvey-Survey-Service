@@ -21,23 +21,8 @@ Feature: PUT /surveys/:id - updates entire survey via JSON (eg: redoing all ques
 
    @update_survey
   Scenario: Take in an ID, put the data into the db
-   Given path <name>
+  Given path "surveys", id
     And ## we have json
     When method PUT
-     And <value>
     Then status 200
-    And ## other requirements
-    	| name  | value |
-      | name1 |       |
-      | name2 |       |
-
-  @tag2
-  Scenario Outline: Title of your scenario outline
-    Given I want to write a step with <name>
-    When I check for the <value> in step
-    Then I verify the <status> in step
-
-    Examples: 
-      | name  | value | status  |
-      | name1 |     5 | success |
-      | name2 |     7 | Fail    |
+   And match response == { id: '#(id)', name: 'Scooby' }

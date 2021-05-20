@@ -22,7 +22,7 @@ POST /surveys - creates new survey via JSON
 
   @create_new_survey
   Scenario: Take in JSON object, Create a new survey
-    Given ## we have json
+   Given path "surveys", id
     When method POST
     Then status 201
-    And ## other requirements
+    And match response == { id: '#(id)', name: 'Scooby' }

@@ -21,7 +21,6 @@ Feature: 	OPTIONS /surveys
 
    @options_surveys
   Scenario: return an array of all surveys
-    Given ## we have json
+   Given path "surveys", id
     When method OPTIONS
     Then status 200
-    And ## other requirements
