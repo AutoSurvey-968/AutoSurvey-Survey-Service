@@ -41,7 +41,9 @@ public class SurveyServiceImp implements SurveyService {
 					list.add(objectMapper.readValue(json, Question.class));
 				}
 				survey.setQuestions(list);
-			} catch (Exception e ) {}
+			} catch (Exception e ) {
+				return;
+			}
 		});
 	}
 

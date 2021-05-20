@@ -33,11 +33,10 @@ public class SurveyController {
 	@PostMapping
 	public Mono<ResponseEntity<Object>> addSurvey(@RequestBody Survey bodySurvey) {
 		try {
-			return surveyService.addSurvey(bodySurvey).defaultIfEmpty(emptySurvey).map(survey -> {
-				return ResponseEntity.status(HttpStatus.CREATED).body(survey);
-			});
+			return surveyService.addSurvey(bodySurvey).defaultIfEmpty(emptySurvey).map(survey -> 
+				ResponseEntity.status(HttpStatus.CREATED).body(survey)
+			);
 		} catch (JsonProcessingException e) {
-			System.out.println(e);
 			return Mono.just(ResponseEntity.badRequest().build());
 		}
 	}
