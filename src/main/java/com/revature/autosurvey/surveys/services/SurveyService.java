@@ -8,4 +8,6 @@ import reactor.core.publisher.Mono;
 
 public interface SurveyService {
 	Mono<Survey> getByUuid(UUID uuid);
+
+	Mono<Survey> deleteSurvey(UUID uuid);
 }

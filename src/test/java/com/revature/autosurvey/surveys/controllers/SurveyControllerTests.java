@@ -74,4 +74,15 @@ class SurveyControllerTests {
 		
 		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
 	}
+	
+	@Test
+	void testDeleteByUuidRespondsWithNoContentWhenGivenValidUuid() {
+		Survey survey = new Survey();
+		survey.setUuid(validUuid);
+		
+		doReturn(Mono.just(survey)).when(surveyService).deleteSurvey(any());
+		Mono<ResponseEntity<Object>> result = surveyController.deleteSurvey(validUuid);
+		
+		StepVerifier.create(result).expectNext(ResponseEntity.noContent().build()).verifyComplete();
+	}
 }
