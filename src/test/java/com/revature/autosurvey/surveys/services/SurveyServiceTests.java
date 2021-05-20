@@ -53,7 +53,7 @@ class SurveyServiceTests {
 	
 	@Test
 	void testDeleteByUuid() {
-		doReturn(Mono.just(survey1)).when(repoMock).deleteById(id1);
+		doReturn(Mono.just(survey1)).when(repoMock).deleteByUuid(id1);
 		
 		UUID idResult= ssi.deleteSurvey(id1).block().getUuid();
 		assertEquals(id1, idResult);
