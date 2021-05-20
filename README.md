@@ -22,7 +22,7 @@ Set AWS_PASS and AWS_USER environment variables
 
 ## Usage
 
-*TBD*
+*TBD*?
 
 ## Contributors
 
