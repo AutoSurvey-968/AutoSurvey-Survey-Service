@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.Assert;
 
 import com.revature.autosurvey.surveys.beans.Survey;
 import com.revature.autosurvey.surveys.services.SurveyService;
@@ -59,7 +58,7 @@ class SurveyControllerTests {
 	void testGetByUuidRespondsWith404WhenServiceReturnsEmptyMono() {
 		doReturn(Mono.empty()).when(surveyService).getByUuid(any());
 		
-		Mono<ResponseEntity<Survey>> result = surveyController.getByUuid(invalidUuid);
+		Mono<ResponseEntity<Object>> result = surveyController.getSurveyByUuid(invalidUuid);
 		
 		StepVerifier.create(result).expectNext(ResponseEntity.notFound().build()).verifyComplete();;
 	}
@@ -70,7 +69,7 @@ class SurveyControllerTests {
 		survey.setUuid(validUuid);
 		
 		doReturn(Mono.just(survey)).when(surveyService).getByUuid(any());
-		Mono<ResponseEntity<Survey>> result = surveyController.getByUuid(validUuid);
+		Mono<ResponseEntity<Object>> result = surveyController.getSurveyByUuid(validUuid);
 		
 		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
 	}

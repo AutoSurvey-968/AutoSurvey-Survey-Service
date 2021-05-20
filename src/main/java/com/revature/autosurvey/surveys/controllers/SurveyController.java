@@ -3,13 +3,17 @@ package com.revature.autosurvey.surveys.controllers;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.revature.autosurvey.surveys.beans.Survey;
 import com.revature.autosurvey.surveys.services.SurveyService;
 
@@ -25,9 +29,20 @@ public class SurveyController {
 	public void setSurveyService(SurveyService surveyService) {
 		this.surveyService = surveyService;
 	}
-
+	
+	@PostMapping
+	public Mono<ResponseEntity<Object>> addSurvey(@RequestBody Survey bodySurvey) {
+		try {
+			return surveyService.addSurvey(bodySurvey).defaultIfEmpty(emptySurvey).map(survey -> 
+				ResponseEntity.status(HttpStatus.CREATED).body(survey)
+			);
+		} catch (JsonProcessingException e) {
+			return Mono.just(ResponseEntity.badRequest().build());
+		}
+	}
+	
 	@GetMapping("{id}")
-	public Mono<ResponseEntity<Survey>> getByUuid(@PathVariable("id") UUID uuid) {
+	public Mono<ResponseEntity<Object>> getSurveyByUuid(@PathVariable("id") UUID uuid) {
 		return surveyService.getByUuid(uuid).defaultIfEmpty(emptySurvey).map(survey -> {
 			if (uuid.equals(survey.getUuid())) {
 				return ResponseEntity.ok(survey);
