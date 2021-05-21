@@ -24,19 +24,9 @@ Feature:
 		Background:
 		* def kittens = read('test.json')
 		* url "http://localhost:8081"
-
-## Assuming our path is "http://localhost:8080"
-  @get_all_surveys
-  Scenario: return an array of all surveys
-    Given path "/surveys"
-    When method GET
-    Then status 200
-    And match response contains { uuid: '#present'}
-
-  
-  @get_survey_by_id
+@get_survey_by_id
   Scenario: Take in an ID, return the survey
-    Given path "/surveys/77b08d50-ba3e-11eb-b89f-2f5a5b95c9be"
+    Given path "/surveys/20aba4e0-ba4d-11eb-a76b-4fd190aea853"
     When method GET
     Then status 200
     And match response contains { uuid: '#present', title: 'This is a second title' }
