@@ -28,4 +28,4 @@ Background:
    And request kittens
     When method POST
     Then status 201
-    And match response contains { title: 'This is a second title' }
+    And match response contains { uuid: '#present', title: 'This is a second title' }

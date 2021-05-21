@@ -22,6 +22,7 @@ Feature:
 		GET /surveys/:id - returns single survey as JSON
 		
 		Background:
+		* def kittens = read('test.json')
 		* url "http://localhost:8081"
 
 ## Assuming our path is "http://localhost:8080"
@@ -30,12 +31,12 @@ Feature:
     Given path "/surveys"
     When method GET
     Then status 200
-    And match response contains { id: '#(id)'}
+    And match response contains { uuid: '#present'}
 
   
   @get_survey_by_id
   Scenario: Take in an ID, return the survey
-    Given path "/surveys", id
+    Given path "/surveys/77b08d50-ba3e-11eb-b89f-2f5a5b95c9be"
     When method GET
     Then status 200
-    And match response == { id: '#(id)', name: 'Scooby' }
+    And match response contains { uuid: '#present', title: 'This is a second title' }
