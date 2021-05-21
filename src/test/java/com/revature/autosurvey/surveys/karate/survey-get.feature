@@ -16,7 +16,8 @@
 #""
 ## (Comments)
 #Sample Feature Definition Template
-@survey-get
+
+
 Feature: 
 		GET /surveys - returns array of every survey as JSON
 		GET /surveys/:id - returns single survey as JSON
