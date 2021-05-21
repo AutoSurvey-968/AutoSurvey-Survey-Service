@@ -1,6 +1,6 @@
 package com.revature.autosurvey.surveys.karate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import com.intuit.karate.Results;
 import com.intuit.karate.Runner;
-import java.io.File;
-import java.util.Collection;
-import net.masterthought.cucumber.Configuration;
-import net.masterthought.cucumber.ReportBuilder;
-import org.apache.commons.io.FileUtils;
+//import net.masterthought.cucumber.Configuration;
+//import net.masterthought.cucumber.ReportBuilder;
+//import org.apache.commons.io.FileUtils;
 
 class SurveyKarateTests {
 
