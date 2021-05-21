@@ -21,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
-
 import com.revature.autosurvey.surveys.data.SurveyRepo;
 
 import reactor.core.publisher.Mono;
@@ -78,9 +76,10 @@ class SurveyServiceTests {
 	
 	@Test
 	void testDeleteByUuid() {
-		doReturn(Mono.just(survey1)).when(repoMock).deleteByUuid(id1);
 		
-		UUID idResult= ssi.deleteSurvey(id1).block().getUuid();
+		doReturn(Mono.just(true)).when(repoMock).deleteByUuid(id1);
+		
+		Boolean idResult= ssi.deleteSurvey(id1).block();
 		assertEquals(id1, idResult);
 	}
 	

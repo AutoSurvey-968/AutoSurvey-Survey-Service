@@ -16,7 +16,8 @@
 #""
 ## (Comments)
 #Sample Feature Definition Template
-@survey-get
+
+
 Feature: 
 		GET /surveys - returns array of every survey as JSON
 		GET /surveys/:id - returns single survey as JSON
@@ -24,19 +25,9 @@ Feature:
 		Background:
 		* def kittens = read('test.json')
 		* url "http://localhost:8081"
-
-## Assuming our path is "http://localhost:8080"
-  @get_all_surveys
-  Scenario: return an array of all surveys
-    Given path "/surveys"
-    When method GET
-    Then status 200
-    And match response contains { uuid: '#present'}
-
-  
-  @get_survey_by_id
+@get_survey_by_id
   Scenario: Take in an ID, return the survey
-    Given path "/surveys/77b08d50-ba3e-11eb-b89f-2f5a5b95c9be"
+    Given path "/surveys/8c07b9d0-ba62-11eb-ab7f-27b80cf05a16"
     When method GET
     Then status 200
     And match response contains { uuid: '#present', title: 'This is a second title' }

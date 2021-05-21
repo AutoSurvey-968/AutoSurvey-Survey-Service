@@ -55,6 +55,7 @@ public class SurveyController {
 	public Mono<ResponseEntity<Object>> deleteSurvey(@PathVariable("id") UUID uuid) {
 		return surveyService.deleteSurvey(uuid)
 				.map(survey -> ResponseEntity.noContent().build())
-				.onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
+				.onErrorStop();
+				//.onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
 	}
 }

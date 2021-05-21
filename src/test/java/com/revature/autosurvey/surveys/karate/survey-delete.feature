@@ -18,9 +18,10 @@
 #Sample Feature Definition Template
 @survey-delete
 Feature: DELETE /surveys - deletes survey
-
+Background:
+		* url "http://localhost:8081"
   @delete_survey
-  Scenario: Take in an ID, put the data into the db
-   Given path "surveys", id
+  Scenario: Take in an ID, delete the survey from the db
+    Given path "/surveys/8c07b9d0-ba62-11eb-ab7f-27b80cf05a16"
     When method DELETE
     Then status 204
