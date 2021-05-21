@@ -2,6 +2,9 @@ package com.revature.autosurvey.surveys.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.UUID;
 
@@ -12,9 +15,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.revature.autosurvey.surveys.beans.Survey;
 import com.revature.autosurvey.surveys.services.SurveyService;
 
@@ -60,7 +65,7 @@ class SurveyControllerTests {
 		
 		Mono<ResponseEntity<Object>> result = surveyController.getSurveyByUuid(invalidUuid);
 		
-		StepVerifier.create(result).expectNext(ResponseEntity.notFound().build()).verifyComplete();;
+		StepVerifier.create(result).expectNext(ResponseEntity.notFound().build()).verifyComplete();
 	}
 	
 	@Test
@@ -83,5 +88,28 @@ class SurveyControllerTests {
 		Mono<ResponseEntity<Object>> result = surveyController.deleteSurvey(validUuid);
 		
 		StepVerifier.create(result).expectNext(ResponseEntity.noContent().build()).verifyComplete();
+	}
+	
+	@Test
+	void testAddSurveyAddsASurvey() throws JsonProcessingException {
+		Survey survey = new Survey();
+		doReturn(Mono.just(survey)).when(surveyService).addSurvey(any());
+		Mono<ResponseEntity<Object>> result = surveyController.addSurvey(survey);
+		StepVerifier.create(result)
+				.expectNext(ResponseEntity.status(HttpStatus.CREATED).body(survey))
+				.verifyComplete();
+	}
+	
+	@Test()
+	void testAddSurveyErrorsOnBadMapping() throws JsonProcessingException {
+		Survey survey = new Survey();
+		
+		doThrow(JsonProcessingException.class).when(surveyService).addSurvey(any());
+		
+		Mono<ResponseEntity<Object>> result = surveyController.addSurvey(survey);
+		
+		StepVerifier.create(result)
+				.expectNext(ResponseEntity.badRequest().build())
+				.verifyComplete();
 	}
 }
