@@ -17,7 +17,8 @@ class SurveyKarateTests {
 	void testParallel() {
 		System.setProperty("karate.env", "dev");
 		tests.add("classpath:/com/revature/autosurvey/surveys/karate/survey-get.feature");
-		tests.add("classpath:/com/revature/autosurvey/surveys/karate/survey-post.feature");
+		//tests.add("classpath:/com/revature/autosurvey/surveys/karate/survey-post.feature");
+		tests.add("classpath:/com/revature/autosurvey/surveys/karate/survey-delete.feature");
 		Results results = Runner.path(tests).parallel(5);
 		assertEquals(0, results.getFailCount(), results.getErrorMessages());
 	}

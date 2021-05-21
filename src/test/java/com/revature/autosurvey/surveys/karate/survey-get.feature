@@ -27,7 +27,7 @@ Feature:
 		* url "http://localhost:8081"
 @get_survey_by_id
   Scenario: Take in an ID, return the survey
-    Given path "/surveys/20aba4e0-ba4d-11eb-a76b-4fd190aea853"
+    Given path "/surveys/8c07b9d0-ba62-11eb-ab7f-27b80cf05a16"
     When method GET
     Then status 200
     And match response contains { uuid: '#present', title: 'This is a second title' }
