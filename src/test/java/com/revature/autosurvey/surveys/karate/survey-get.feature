@@ -28,6 +28,7 @@ Feature:
 @get_survey_by_id
   Scenario: Take in an ID, return the survey
     Given path "/surveys/8c07b9d0-ba62-11eb-ab7f-27b80cf05a16"
+    And request kittens
     When method GET
     Then status 200
     And match response contains { uuid: '#present', title: 'This is a second title' }

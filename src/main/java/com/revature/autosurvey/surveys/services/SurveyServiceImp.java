@@ -67,7 +67,12 @@ public class SurveyServiceImp implements SurveyService {
 	}
 
 	@Override
-	public Mono<Map<UUID, String>> getAllSurveyList() { 
+
+	public Mono<Survey> editSurvey(Survey bodySurvey) {
+		return surveyRepo.save(bodySurvey);
+	}
+
+	public Mono<Map<UUID, String>> getAllSurveyList() {
 		return surveyRepo.findAll().collectMap(Survey::getUuid, Survey::getTitle);
 
 	}

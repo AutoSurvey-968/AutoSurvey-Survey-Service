@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,8 +58,18 @@ public class SurveyController {
 				.onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
 	}
 
+	@PutMapping("{id}")
+	public Mono<ResponseEntity<Survey>> editSurvey(@PathVariable("id") UUID uuid, @RequestBody Survey bodySurvey) {
+		Survey s = bodySurvey;
+		s.setUuid(uuid);
+		return surveyService.editSurvey(s).defaultIfEmpty(emptySurvey).map(survey -> ResponseEntity.ok(survey))
+				.onErrorResume(error -> Mono.just(ResponseEntity.badRequest().build()));
+
+	}
+
 	@GetMapping
 	public Mono<ResponseEntity<Map<UUID, String>>> getAllSurveyList() {
 		return surveyService.getAllSurveyList().map(list -> ResponseEntity.ok(list));
+
 	}
 }
