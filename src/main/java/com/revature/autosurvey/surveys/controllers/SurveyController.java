@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,18 +30,17 @@ public class SurveyController {
 	public void setSurveyService(SurveyService surveyService) {
 		this.surveyService = surveyService;
 	}
-	
+
 	@PostMapping
 	public Mono<ResponseEntity<Object>> addSurvey(@RequestBody Survey bodySurvey) {
 		try {
-			return surveyService.addSurvey(bodySurvey).defaultIfEmpty(emptySurvey).map(survey -> 
-				ResponseEntity.status(HttpStatus.CREATED).body(survey)
-			);
+			return surveyService.addSurvey(bodySurvey).defaultIfEmpty(emptySurvey)
+					.map(survey -> ResponseEntity.status(HttpStatus.CREATED).body(survey));
 		} catch (JsonProcessingException e) {
 			return Mono.just(ResponseEntity.badRequest().build());
 		}
 	}
-	
+
 	@GetMapping("{id}")
 	public Mono<ResponseEntity<Object>> getSurveyByUuid(@PathVariable("id") UUID uuid) {
 		return surveyService.getByUuid(uuid).defaultIfEmpty(emptySurvey).map(survey -> {
@@ -53,8 +53,16 @@ public class SurveyController {
 
 	@DeleteMapping("{id}")
 	public Mono<ResponseEntity<Object>> deleteSurvey(@PathVariable("id") UUID uuid) {
-		return surveyService.deleteSurvey(uuid)
-				.map(survey -> ResponseEntity.noContent().build())
+		return surveyService.deleteSurvey(uuid).map(survey -> ResponseEntity.noContent().build())
 				.onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
+	}
+
+	@PutMapping("{id}")
+	public Mono<ResponseEntity<Survey>> editSurvey(@PathVariable("id") UUID uuid, @RequestBody Survey bodySurvey) {
+		Survey s = bodySurvey;
+		s.setUuid(uuid);
+		return surveyService.editSurvey(s).defaultIfEmpty(emptySurvey).map(survey -> ResponseEntity.ok(survey))
+				.onErrorResume(error -> Mono.just(ResponseEntity.badRequest().build()));
+
 	}
 }

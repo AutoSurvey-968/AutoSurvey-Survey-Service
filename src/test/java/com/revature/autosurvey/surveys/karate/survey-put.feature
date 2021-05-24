@@ -18,11 +18,13 @@
 #Sample Feature Definition Template
 @survey-put
 Feature: PUT /surveys/:id - updates entire survey via JSON (eg: redoing all questions)
-
+	Background:
+		* def kittens = read('test.json')
+		* url "http://localhost:8081"
    @update_survey
   Scenario: Take in an ID, put the data into the db
-  Given path "surveys", id
-    And ## we have json
+  Given path "surveys/ee38aad0-ba60-11eb-ab7f-27b80cf05a16"
+  And request kittens
     When method PUT
     Then status 200
-   And match response == { id: '#(id)', name: 'Scooby' }
+    And match response contains { uuid: '#present', title: 'This is a second title' }

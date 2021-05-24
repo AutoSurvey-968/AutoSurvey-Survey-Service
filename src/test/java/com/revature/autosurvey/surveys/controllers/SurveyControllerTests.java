@@ -109,4 +109,14 @@ class SurveyControllerTests {
 				.expectNext(ResponseEntity.badRequest().build())
 				.verifyComplete();
 	}
+	@Test
+	void testEditRespondsWithSurveyWhenGivenValidUuid() {
+		Survey survey = new Survey();
+		survey.setUuid(validUuid);
+		
+		doReturn(Mono.just(survey)).when(surveyService).editSurvey(any());
+		Mono<ResponseEntity<Survey>> result = surveyController.editSurvey(validUuid, survey);
+		
+		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
+	}
 }
