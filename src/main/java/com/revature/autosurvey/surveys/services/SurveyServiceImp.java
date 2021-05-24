@@ -62,7 +62,7 @@ public class SurveyServiceImp implements SurveyService {
 	}
 	
 	@Override
-	public Mono<Survey> deleteSurvey(UUID uuid) {
+	public Mono<Boolean> deleteSurvey(UUID uuid) {
 		return surveyRepo.deleteByUuid(uuid);
 	}
 }

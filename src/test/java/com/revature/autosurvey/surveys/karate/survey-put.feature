@@ -16,27 +16,13 @@
 #""
 ## (Comments)
 #Sample Feature Definition Template
-@survey-get
-Feature: 
-		GET /surveys - returns array of every survey as JSON
-		GET /surveys/:id - returns single survey as JSON
+@survey-put
+Feature: PUT /surveys/:id - updates entire survey via JSON (eg: redoing all questions)
 
-## Assuming our path is "http://localhost:8080 
-  @get_all_surveys
-  Scenario: return an array of all surveys
-    Given ## we have json
-    When method GET
-    Then status 201
-    And ## other requirements
-  
-  @get_survey_by_id
-  Scenario: Take in an ID, return the survey
-    Given path <name>
+   @update_survey
+  Scenario: Take in an ID, put the data into the db
+  Given path "surveys", id
     And ## we have json
-    When method GET
-    And <value>
+    When method PUT
     Then status 200
-    And ## other requirements
-    	| name  | value |
-      | name1 |       |
-      | name2 |       |
+   And match response == { id: '#(id)', name: 'Scooby' }
