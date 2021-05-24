@@ -16,12 +16,19 @@
 #""
 ## (Comments)
 #Sample Feature Definition Template
-@survey-options
-Feature: 	OPTIONS /surveys
+@survey-head
+Feature: HEAD /surveys - returns header of GET /surveys
+		HEAD /surveys/:id - returns header of GET /surveys/:id
 
-   @options_surveys
+   @get_all_surveys_head
   Scenario: return an array of all surveys
-    Given ## we have json
-    When method OPTIONS
+    Given path "surveys"
+    When method HEAD
     Then status 200
-    And ## other requirements
+  
+  @get_survey_by_id
+  Scenario: Take in an ID, return the survey
+    Given path "surveys", id
+    And ## we have json
+    When method HEAD
+    Then status 200

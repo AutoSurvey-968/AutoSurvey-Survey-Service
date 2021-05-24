@@ -16,28 +16,16 @@
 #""
 ## (Comments)
 #Sample Feature Definition Template
-@survey-put
-Feature: PUT /surveys/:id - updates entire survey via JSON (eg: redoing all questions)
-
-   @update_survey
-  Scenario: Take in an ID, put the data into the db
-   Given path <name>
+@survey-patch
+Feature: PATCH /surveys/:id - partially updates survey via JSON (eg: fixing a typo in a question)
+def id = 1
+  @patch_survey
+  Scenario: Take in an ID, patch the data into the db
+  Given path "surveys", id
     And ## we have json
-    When method PUT
-     And <value>
+    When method PATCH
     Then status 200
     And ## other requirements
     	| name  | value |
       | name1 |       |
       | name2 |       |
-
-  @tag2
-  Scenario Outline: Title of your scenario outline
-    Given I want to write a step with <name>
-    When I check for the <value> in step
-    Then I verify the <status> in step
-
-    Examples: 
-      | name  | value | status  |
-      | name1 |     5 | success |
-      | name2 |     7 | Fail    |

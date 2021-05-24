@@ -8,11 +8,8 @@ import lombok.Data;
 
 @Data
 public class Question implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6157862126403322171L;
-	
+
 	private QuestionType questionType;
 	private String title;
 	private String helpText;
