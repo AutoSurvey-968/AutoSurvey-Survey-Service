@@ -57,7 +57,7 @@ public class SurveyController {
 				.onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
 	}
 
-	@GetMapping(path = "all")
+	@GetMapping
 	public Mono<ResponseEntity<Map<UUID, String>>> getAllSurveyList() {
 		return surveyService.getAllSurveyList().map(list -> ResponseEntity.ok(list));
 	}
