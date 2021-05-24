@@ -22,7 +22,6 @@ import com.revature.autosurvey.surveys.services.SurveyService;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("surveys")
 public class SurveyController {
 	private final Survey emptySurvey = new Survey();
 	private SurveyService surveyService;
