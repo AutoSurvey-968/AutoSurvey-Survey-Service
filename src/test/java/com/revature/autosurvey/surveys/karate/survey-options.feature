@@ -16,13 +16,11 @@
 #""
 ## (Comments)
 #Sample Feature Definition Template
-@survey-post
-Feature: 
-POST /surveys - creates new survey via JSON
+@survey-options
+Feature: 	OPTIONS /surveys
 
-  @create_new_survey
-  Scenario: Take in JSON object, Create a new survey
-    Given ## we have json
-    When method POST
-    Then status 201
-    And ## other requirements
+   @options_surveys
+  Scenario: return an array of all surveys
+   Given path "surveys", id
+    When method OPTIONS
+    Then status 200

@@ -14,5 +14,5 @@ public interface SurveyRepo extends ReactiveCassandraRepository<Survey, UUID> {
 	@AllowFiltering
 	Mono<Survey> getByUuid(UUID uuid);
 	@AllowFiltering
-	Mono<Survey> deleteByUuid(UUID uuid);
+	Mono<Boolean> deleteByUuid(UUID uuid);
 }

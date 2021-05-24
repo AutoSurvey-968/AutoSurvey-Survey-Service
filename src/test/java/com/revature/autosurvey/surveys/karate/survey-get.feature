@@ -16,17 +16,18 @@
 #""
 ## (Comments)
 #Sample Feature Definition Template
-@survey-patch
-Feature: PATCH /surveys/:id - partially updates survey via JSON (eg: fixing a typo in a question)
 
-  @patch_survey
-  Scenario: Take in an ID, patch the data into the db
-   Given path <name>
-    And ## we have json
-    When method PATCH
-     And <value>
+
+Feature: 
+		GET /surveys - returns array of every survey as JSON
+		GET /surveys/:id - returns single survey as JSON
+		
+		Background:
+		* def kittens = read('test.json')
+		* url "http://localhost:8081"
+@get_survey_by_id
+  Scenario: Take in an ID, return the survey
+    Given path "/surveys/8c07b9d0-ba62-11eb-ab7f-27b80cf05a16"
+    When method GET
     Then status 200
-    And ## other requirements
-    	| name  | value |
-      | name1 |       |
-      | name2 |       |
+    And match response contains { uuid: '#present', title: 'This is a second title' }
