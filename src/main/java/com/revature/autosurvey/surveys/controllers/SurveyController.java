@@ -1,5 +1,6 @@
 package com.revature.autosurvey.surveys.controllers;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,12 @@ public class SurveyController {
 		s.setUuid(uuid);
 		return surveyService.editSurvey(s).defaultIfEmpty(emptySurvey).map(survey -> ResponseEntity.ok(survey))
 				.onErrorResume(error -> Mono.just(ResponseEntity.badRequest().build()));
+
+	}
+
+	@GetMapping
+	public Mono<ResponseEntity<Map<UUID, String>>> getAllSurveyList() {
+		return surveyService.getAllSurveyList().map(list -> ResponseEntity.ok(list));
 
 	}
 }
