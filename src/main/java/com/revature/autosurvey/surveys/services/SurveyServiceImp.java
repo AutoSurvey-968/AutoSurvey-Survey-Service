@@ -14,7 +14,6 @@ import com.revature.autosurvey.surveys.beans.Question;
 import com.revature.autosurvey.surveys.beans.Survey;
 import com.revature.autosurvey.surveys.data.SurveyRepo;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -68,10 +67,8 @@ public class SurveyServiceImp implements SurveyService {
 	}
 
 	@Override
-	public Mono<Map<UUID, String>> getAllSurveyList() {
-		Flux<Survey> surveys = surveyRepo.findAll();
-		Mono<Map<UUID, String>> result = surveys.collectMap(Survey::getUuid, Survey::getTitle);
-		return result;
+	public Mono<Map<UUID, String>> getAllSurveyList() { 
+		return surveyRepo.findAll().collectMap(Survey::getUuid, Survey::getTitle);
 
 	}
 }
