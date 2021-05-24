@@ -31,3 +31,9 @@ Feature:
     When method GET
     Then status 200
     And match response contains { uuid: '#present', title: 'This is a second title' }
+@get_all_surveys     
+   Scenario: return an array of all surveys
+    Given path "/surveys/all"
+    When method GET
+    Then status 200
+    And match response == '#notnull'

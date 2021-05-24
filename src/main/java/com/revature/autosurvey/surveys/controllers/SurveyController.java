@@ -1,5 +1,6 @@
 package com.revature.autosurvey.surveys.controllers;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,18 +30,17 @@ public class SurveyController {
 	public void setSurveyService(SurveyService surveyService) {
 		this.surveyService = surveyService;
 	}
-	
+
 	@PostMapping
 	public Mono<ResponseEntity<Object>> addSurvey(@RequestBody Survey bodySurvey) {
 		try {
-			return surveyService.addSurvey(bodySurvey).defaultIfEmpty(emptySurvey).map(survey -> 
-				ResponseEntity.status(HttpStatus.CREATED).body(survey)
-			);
+			return surveyService.addSurvey(bodySurvey).defaultIfEmpty(emptySurvey)
+					.map(survey -> ResponseEntity.status(HttpStatus.CREATED).body(survey));
 		} catch (JsonProcessingException e) {
 			return Mono.just(ResponseEntity.badRequest().build());
 		}
 	}
-	
+
 	@GetMapping("{id}")
 	public Mono<ResponseEntity<Object>> getSurveyByUuid(@PathVariable("id") UUID uuid) {
 		return surveyService.getByUuid(uuid).defaultIfEmpty(emptySurvey).map(survey -> {
@@ -53,8 +53,12 @@ public class SurveyController {
 
 	@DeleteMapping("{id}")
 	public Mono<ResponseEntity<Object>> deleteSurvey(@PathVariable("id") UUID uuid) {
-		return surveyService.deleteSurvey(uuid)
-				.map(survey -> ResponseEntity.noContent().build())
+		return surveyService.deleteSurvey(uuid).map(survey -> ResponseEntity.noContent().build())
 				.onErrorResume(error -> Mono.just(ResponseEntity.notFound().build()));
+	}
+
+	@GetMapping
+	public Mono<ResponseEntity<Map<UUID, String>>> getAllSurveyList() {
+		return surveyService.getAllSurveyList().map(list -> ResponseEntity.ok(list));
 	}
 }

@@ -3,6 +3,9 @@ package com.revature.autosurvey.surveys.controllers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -25,7 +28,7 @@ import reactor.test.StepVerifier;
 
 @ExtendWith(SpringExtension.class)
 class SurveyControllerTests {
-	
+
 	@TestConfiguration
 	static class Configuration {
 		@Bean
@@ -34,79 +37,88 @@ class SurveyControllerTests {
 			surveyController.setSurveyService(surveyService);
 			return surveyController;
 		}
-		
+
 		@Bean
 		public SurveyService getSurveyService() {
 			return Mockito.mock(SurveyService.class);
 		}
 	}
-	
+
 	@Autowired
 	private SurveyController surveyController;
-	
-	@Autowired 
+
+	@Autowired
 	private SurveyService surveyService;
-	
+
 	private static UUID validUuid;
 	private static UUID invalidUuid;
-	
+	private static String validTitle;
+
 	@BeforeAll
 	static void before() {
 		invalidUuid = UUID.fromString("5ec294ec-b8d5-11eb-8529-0242ac130003");
 		validUuid = UUID.fromString("186d7fd1-1aae-44f4-8755-c3ebb5d4711f");
+		validTitle = "This is a valid title!";
 	}
-	
+
 	@Test
 	void testGetByUuidRespondsWith404WhenServiceReturnsEmptyMono() {
 		doReturn(Mono.empty()).when(surveyService).getByUuid(any());
-		
+
 		Mono<ResponseEntity<Object>> result = surveyController.getSurveyByUuid(invalidUuid);
-		
+
 		StepVerifier.create(result).expectNext(ResponseEntity.notFound().build()).verifyComplete();
 	}
-	
+
 	@Test
 	void testGetByUuidRespondsWithSurveyWhenGivenValidUuid() {
 		Survey survey = new Survey();
 		survey.setUuid(validUuid);
-		
+
 		doReturn(Mono.just(survey)).when(surveyService).getByUuid(any());
 		Mono<ResponseEntity<Object>> result = surveyController.getSurveyByUuid(validUuid);
-		
+
 		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
 	}
-	
+
+	@Test
+	void testGetAllRespondsWithList() {		
+		Map<UUID, String> testData = new HashMap<>();
+		testData.put(validUuid, validTitle);
+		
+		doReturn(Mono.just(testData)).when(surveyService).getAllSurveyList();
+		Mono<ResponseEntity<Map<UUID, String>>> result = surveyController.getAllSurveyList();
+
+		StepVerifier.create(result).expectNext(ResponseEntity.ok(testData)).verifyComplete();
+	}
+
 	@Test
 	void testDeleteByUuidRespondsWithNoContentWhenGivenValidUuid() {
 		Survey survey = new Survey();
 		survey.setUuid(validUuid);
-		
+
 		doReturn(Mono.just(true)).when(surveyService).deleteSurvey(any());
 		Mono<ResponseEntity<Object>> result = surveyController.deleteSurvey(validUuid);
-		
+
 		StepVerifier.create(result).expectNext(ResponseEntity.noContent().build()).verifyComplete();
 	}
-	
+
 	@Test
 	void testAddSurveyAddsASurvey() throws JsonProcessingException {
 		Survey survey = new Survey();
 		doReturn(Mono.just(survey)).when(surveyService).addSurvey(any());
 		Mono<ResponseEntity<Object>> result = surveyController.addSurvey(survey);
-		StepVerifier.create(result)
-				.expectNext(ResponseEntity.status(HttpStatus.CREATED).body(survey))
-				.verifyComplete();
+		StepVerifier.create(result).expectNext(ResponseEntity.status(HttpStatus.CREATED).body(survey)).verifyComplete();
 	}
-	
+
 	@Test()
 	void testAddSurveyErrorsOnBadMapping() throws JsonProcessingException {
 		Survey survey = new Survey();
-		
+
 		doThrow(JsonProcessingException.class).when(surveyService).addSurvey(any());
-		
+
 		Mono<ResponseEntity<Object>> result = surveyController.addSurvey(survey);
-		
-		StepVerifier.create(result)
-				.expectNext(ResponseEntity.badRequest().build())
-				.verifyComplete();
+
+		StepVerifier.create(result).expectNext(ResponseEntity.badRequest().build()).verifyComplete();
 	}
 }
