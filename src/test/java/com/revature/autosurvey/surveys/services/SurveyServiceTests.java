@@ -8,13 +8,10 @@ import com.revature.autosurvey.surveys.beans.Survey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.ArgumentMatchers.anyString;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,7 +77,7 @@ class SurveyServiceTests {
 		doReturn(Mono.just(true)).when(repoMock).deleteByUuid(id1);
 		
 		Boolean idResult= ssi.deleteSurvey(id1).block();
-		assertEquals(id1, idResult);
+		assertEquals(true, idResult);
 	}
 	
 	

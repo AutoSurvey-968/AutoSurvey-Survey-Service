@@ -3,9 +3,6 @@ package com.revature.autosurvey.surveys.controllers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeAll;
