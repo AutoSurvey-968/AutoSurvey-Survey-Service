@@ -2,6 +2,7 @@ package com.revature.autosurvey.surveys.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +18,15 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class SurveyServiceImp implements SurveyService {
-	
+
 	private SurveyRepo surveyRepo;
 	private ObjectMapper objectMapper;
-	
+
 	@Autowired
 	public void setSurveyRepo(SurveyRepo surveyRepo) {
 		this.surveyRepo = surveyRepo;
 	}
-	
+
 	@Autowired
 	public void setObjectMapper(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
@@ -33,15 +34,14 @@ public class SurveyServiceImp implements SurveyService {
 
 	@Override
 	public Mono<Survey> getByUuid(UUID uuid) {
-		return surveyRepo.getByUuid(uuid)
-			.doOnNext(survey -> {
+		return surveyRepo.getByUuid(uuid).doOnNext(survey -> {
 			try {
 				List<Question> list = new ArrayList<>();
 				for (String json : survey.getMappedQuestions()) {
 					list.add(objectMapper.readValue(json, Question.class));
 				}
 				survey.setQuestions(list);
-			} catch (Exception e ) {
+			} catch (Exception e) {
 				return;
 			}
 		});
@@ -52,7 +52,7 @@ public class SurveyServiceImp implements SurveyService {
 		try {
 			List<String> list = new ArrayList<>();
 			for (Question question : survey.getQuestions()) {
-					list.add(objectMapper.writeValueAsString(question));
+				list.add(objectMapper.writeValueAsString(question));
 			}
 			survey.setMappedQuestions(list);
 			return surveyRepo.save(survey);
@@ -60,9 +60,20 @@ public class SurveyServiceImp implements SurveyService {
 			return Mono.empty();
 		}
 	}
-	
+
 	@Override
 	public Mono<Boolean> deleteSurvey(UUID uuid) {
 		return surveyRepo.deleteByUuid(uuid);
+	}
+
+	@Override
+
+	public Mono<Survey> editSurvey(Survey bodySurvey) {
+		return surveyRepo.save(bodySurvey);
+	}
+
+	public Mono<Map<UUID, String>> getAllSurveyList() {
+		return surveyRepo.findAll().collectMap(Survey::getUuid, Survey::getTitle);
+
 	}
 }
