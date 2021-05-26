@@ -89,6 +89,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<finalName>survey-service</finalName>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
