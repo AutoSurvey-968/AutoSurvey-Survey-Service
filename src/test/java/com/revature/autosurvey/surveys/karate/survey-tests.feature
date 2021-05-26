@@ -32,8 +32,7 @@ return an array of all surveys
 Take in an ID, delete the survey from the db
 
 ##POST /surveys - creates new survey via JSON
-Given path "surveys"
-And request kittens
+Given request kittens
 When method POST
 Then status 201
 And match response contains { uuid: '#present', title: 'This is a second title' }
@@ -41,19 +40,18 @@ And match response contains { uuid: '#present', title: 'This is a second title' 
 * def uuid = response.uuid
 
 ## GET /surveys/:id - returns single survey as JSON
-Given path "/surveys/" + uuid
+Given "/" + uuid
 When method GET
 Then status 200
 And match response contains { uuid: '#present', title: 'This is a second title' }
     
 ##GET /surveys - returns array of every survey as JSON
-Given path "/surveys"
 When method GET
 Then status 200
 And match response == '#notnull'
 
 ##DELETE /surveys - deletes survey
-Given path "/surveys", uuid
+Given path "/" + uuid
 When method DELETE
 Then status 204
     
