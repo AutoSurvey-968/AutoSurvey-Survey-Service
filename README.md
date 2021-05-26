@@ -9,10 +9,18 @@ The survey microservices for AutoSurvey-968
   - Reactive Web
 * SonarCloud
 * Lombok
+* Swagger
+* DataStax
+* Eureka
+* Karate
+* JUnit
+* Jacoco
 
 ## Features
 
-*TBD*
+* Create and Maintain Surveys, including their Question Sets.
+* Search for one or more Surveys.
+* Get a list of all available Surveys.
 
 ## Getting started
 
@@ -22,10 +30,12 @@ Set AWS_PASS and AWS_USER environment variables
 
 ## Usage
 
-*TBD*?
+* Run the mircroservice
+* Make requests to the service's url with the appropriate path (e.x. *http://localhost:8080/surveys/*)
 
 ## Contributors
 
-[Robert Bierly](https://github.com/rnbiv45),
-[Arieh Gennello](https://github.com/MoldedPixels)
-Etc.
+- [Robert Bierly](https://github.com/rnbiv45)
+- [Arieh Gennello](https://github.com/MoldedPixels)
+- [Benjamin Wood](https://github.com/lwood-benjamin)
+- Etc.
