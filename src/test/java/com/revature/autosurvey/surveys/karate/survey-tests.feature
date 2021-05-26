@@ -22,7 +22,7 @@ Feature: tests all the functions for Surveys
 
 Background:
 * def kittens = read('test.json')
-* url "http://localhost:8081"
+* url "http://localhost:8080"
 
 
 Scenario: 
