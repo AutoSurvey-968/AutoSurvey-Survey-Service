@@ -35,6 +35,6 @@ public class SecurityConfig {
 				.authorizeExchange().pathMatchers(HttpMethod.OPTIONS).permitAll().pathMatchers(HttpMethod.GET, "/{id}")
 				.permitAll().pathMatchers("/swagger-resources/**", "/swagger-ui.html", "/swagger-ui/**", "/v2/api-docs",
 						"/webjars/**")
-				.permitAll().and().build();
+				.permitAll().anyExchange().authenticated().and().build();
 	}
 }
