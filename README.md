@@ -73,6 +73,6 @@ Removes a specific survey from the database.
 
 ## Contributors
 
-- [Robert Bierly](https://github.com/rnbiv45)
+- [Robert Bierly](https://github.com/rnbiv45) - Primary
 - [Arieh Gennello](https://github.com/MoldedPixels)
 - [Benjamin Wood](https://github.com/lwood-benjamin)
