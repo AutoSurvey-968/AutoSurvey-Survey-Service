@@ -13,4 +13,4 @@ if [ -n "$(docker container ls -aqf name=survey-service)" ]; then
 fi
 
 #start survey-service container
-docker container run -d --name survey-serivce --network autosurvey-network -e EUREKA_URL -e CREDENTIALS_JSON -e CREDENTIALS_JSON_ENCODED -e FIREBASE_API_KEY -e SERVICE_ACCOUNT_ID -e AWS_PASS -e AWS_survey -e TRUSTSTORE_PASS -e TRUSTSTORE_ENCODED autosurvey/survey-service
+docker container run -d --name survey-serivce --network autosurvey-network -e EUREKA_URL -e CREDENTIALS_JSON -e CREDENTIALS_JSON_ENCODED -e FIREBASE_API_KEY -e SERVICE_ACCOUNT_ID -e AWS_PASS -e AWS_USER -e TRUSTSTORE_PASS -e TRUSTSTORE_ENCODED autosurvey/survey-service
