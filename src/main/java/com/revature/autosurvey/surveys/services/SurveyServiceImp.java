@@ -42,6 +42,7 @@ public class SurveyServiceImp implements SurveyService {
 				}
 				survey.setQuestions(list);
 			} catch (Exception e) {
+				e.printStackTrace();
 				return;
 			}
 		});
@@ -57,6 +58,7 @@ public class SurveyServiceImp implements SurveyService {
 			survey.setMappedQuestions(list);
 			return surveyRepo.save(survey);
 		} catch (JsonProcessingException e) {
+			e.printStackTrace();
 			return Mono.empty();
 		}
 	}
