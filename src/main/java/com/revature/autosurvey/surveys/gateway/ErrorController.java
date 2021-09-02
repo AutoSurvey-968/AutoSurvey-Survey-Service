@@ -1,4 +1,4 @@
-package com.revature.autosurvey.surveys.controllers;
+package com.revature.autosurvey.surveys.gateway;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
