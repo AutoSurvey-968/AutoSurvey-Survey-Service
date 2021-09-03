@@ -9,7 +9,12 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
+/**
+ * 
+ * @author MuckJosh
+ *
+ *	Class is used to configure Jackson for LocalTimeDate in Surveys
+ */
 @Configuration
 @EnableAsync
 public class JacksonConfig {
