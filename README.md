@@ -32,10 +32,10 @@ Set environment variables:
 
 * AWS_USER - Keyspaces username
 * AWS_PASS - Keyspaces password
-* TRUSTSTORE_PASS - Local Truststore password
+* CREDENTIALS_JSON - Name of credentials json file to be placed in src/main/resources
 * FIREBASE_API_KEY - Firebase API key for authentication calls
 * SERVICE_ACCOUNT_ID - Firebase service account id
-* CREDENTIALS_JSON - Name of credentials json file to be placed in src/main/resources
+* TRUSTSTORE_PASS - Local Truststore password
 
 ## Usage
 
