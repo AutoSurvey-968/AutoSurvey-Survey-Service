@@ -56,7 +56,7 @@ public class SurveyServiceImp implements SurveyService {
 				}
 				survey.setQuestions(list);
 			}catch(Exception e) {
-				
+				return;
 			}
 		});
 	}

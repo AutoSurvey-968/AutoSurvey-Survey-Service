@@ -80,6 +80,16 @@ class SurveyControllerTests {
 
 		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
 	}
+	@Test
+	void testGetByTitleRespondsWithSurveyWhenGivenValidTitle() {
+		Survey survey = new Survey();
+		survey.setTitle(validTitle);
+		
+		doReturn(Mono.just(survey)).when(surveyService).getByTitle(any());
+		Mono<ResponseEntity<Object>> result = surveyController.getSurveyByTitle(validTitle);
+		
+		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
+	}
 
 	@Test
 	void testGetAllRespondsWithList() {		
