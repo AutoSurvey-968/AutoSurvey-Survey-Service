@@ -18,4 +18,6 @@ public interface SurveyService {
 	Mono<Survey> editSurvey(Survey bodySurvey);
 
 	Mono<Map<UUID, String>> getAllSurveyList();
+
+	Mono<Survey> getByTitle(String title);
 }
