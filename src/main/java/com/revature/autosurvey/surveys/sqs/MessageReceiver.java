@@ -21,21 +21,23 @@ import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Mono;
 
 @Log4j2
-@EnableAsync
 @Component
 public class MessageReceiver {
 	
 	public final String qname = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
 	public String destQname = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
 	public MessageSender sender;
-	public List<Message<String>> receivedMsgs = new ArrayList<Message<String>>(); 
-	public Survey empty = new Survey();
+	public List<Message<String>> receivedMsgs; 
+	public Survey empty;
 	
 	public SurveyRepo repository;
 	public ObjectMapper mapper;
 
+	@Autowired
 	public MessageReceiver() {
 			super();
+			receivedMsgs = new ArrayList<Message<String>>();
+			empty = new Survey();
 	}
 
 	@Autowired
@@ -51,11 +53,6 @@ public class MessageReceiver {
 	@Autowired
 	public void setObjectMapper(ObjectMapper mapper) {
 		this.mapper = mapper;
-	}
-	
-	@Bean
-	public List<Message<String>> receivedMsgs() {
-		return new ArrayList<Message<String>>();
 	}
 	
 	@SqsListener(value= qname, deletionPolicy=SqsMessageDeletionPolicy.ON_SUCCESS)

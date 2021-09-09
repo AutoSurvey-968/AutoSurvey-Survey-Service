@@ -7,12 +7,12 @@ import org.springframework.context.ApplicationContext;
 
 import com.revature.autosurvey.surveys.sqs.MessageSender;
 
+
 @SpringBootApplication
 @EnableEurekaClient
 public class SurveysApplication {
 
 	public static void main(String[] args) {
-		
 		ApplicationContext ctx = SpringApplication.run(SurveysApplication.class, args);
 		MessageSender sendMsg = ctx.getBean(MessageSender.class);
 		
@@ -21,8 +21,6 @@ public class SurveysApplication {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	
 	}
 
 }
