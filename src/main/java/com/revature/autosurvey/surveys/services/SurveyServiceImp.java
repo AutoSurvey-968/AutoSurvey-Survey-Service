@@ -27,8 +27,9 @@ public class SurveyServiceImp implements SurveyService {
 
 	private SurveyRepo surveyRepo;
 	private ObjectMapper objectMapper;
-	private static final String[] VALID_HEADERS = {"questionType","title","helpText","isRequired","choices","hasOtherOption"};
 	private static final String CHOICE_HEADER = "choices";
+	private static final String[] VALID_HEADERS = {"questionType","title","helpText","isRequired",CHOICE_HEADER,"hasOtherOption"};
+	
 	
 	@Autowired
 	public void setSurveyRepo(SurveyRepo surveyRepo) {
@@ -120,7 +121,7 @@ public class SurveyServiceImp implements SurveyService {
 				}
 				
 				//Ensure that there is a mapping and a value for each
-				if (!validateHeaders(quesMap)) {
+				if (Boolean.FALSE.equals(validateHeaders(quesMap))) {
 					return Mono.empty();
 				}
 				
