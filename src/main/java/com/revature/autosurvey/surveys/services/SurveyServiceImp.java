@@ -48,6 +48,20 @@ public class SurveyServiceImp implements SurveyService {
 			}
 		});
 	}
+	@Override
+	public Mono<Survey> getByTitle(String title){
+		return surveyRepo.getByTitle(title).doOnNext(survey -> {
+			try {
+				List<Question> list = new ArrayList<>();
+				for (String json : survey.getMappedQuestions()) {
+					list.add(objectMapper.readValue(json, Question.class));
+				}
+				survey.setQuestions(list);
+			}catch(Exception e) {
+				return;
+			}
+		});
+	}
 
 	@Override
 	public Mono<Survey> addSurvey(Survey survey) {

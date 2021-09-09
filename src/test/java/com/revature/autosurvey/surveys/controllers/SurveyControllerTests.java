@@ -83,6 +83,25 @@ class SurveyControllerTests {
 
 		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
 	}
+	
+	@Test
+	void testGetByTitleRespondsWith404WhenServiceReturnsEmptyMono() {
+		doReturn(Mono.empty()).when(surveyService).getByTitle(any());
+
+		Mono<ResponseEntity<Object>> result = surveyController.getSurveyByTitle("bad title");
+
+		StepVerifier.create(result).expectNext(ResponseEntity.notFound().build()).verifyComplete();
+	}
+	@Test
+	void testGetByTitleRespondsWithSurveyWhenGivenValidTitle() {
+		Survey survey = new Survey();
+		survey.setTitle(validTitle);
+		
+		doReturn(Mono.just(survey)).when(surveyService).getByTitle(any());
+		Mono<ResponseEntity<Object>> result = surveyController.getSurveyByTitle(validTitle);
+		
+		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
+	}
 
 	@Test
 	void testGetAllRespondsWithList() {		

@@ -61,6 +61,15 @@ public class SurveyController {
 			return ResponseEntity.notFound().build();
 		});
 	}
+	@GetMapping("/title/{title}")
+	public Mono<ResponseEntity<Object>> getSurveyByTitle(@PathVariable("title")String title){
+		return surveyService.getByTitle(title).defaultIfEmpty(emptySurvey).map(survey -> {
+			if(title.equals(survey.getTitle())) {
+				return ResponseEntity.ok(survey);
+			}
+			return ResponseEntity.notFound().build();
+		});
+	}
 
 	@DeleteMapping("{id}")
 	public Mono<ResponseEntity<Object>> deleteSurvey(@PathVariable("id") UUID uuid) {
