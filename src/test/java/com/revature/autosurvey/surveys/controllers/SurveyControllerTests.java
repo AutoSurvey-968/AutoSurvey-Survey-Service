@@ -164,8 +164,8 @@ class SurveyControllerTests {
 		survey.setTitle(validTitle);
 		survey.setDescription("description");
 		survey.setConfirmation("It is good");
-		when(surveyService.addSurveyFromFile(filePartFlux, survey.getTitle(), survey.getDescription(), survey.getConfirmation())
-				.thenReturn(Mono.just(new Survey())));
+		when(surveyService.addSurveyFromFile(filePartFlux, survey.getTitle(), survey.getDescription(), survey.getConfirmation()))
+				.thenReturn(Mono.just(survey));
 		
 		Mono<ResponseEntity<Object>> response = surveyController.addSurveyFromFile(filePartFlux, survey.getTitle(), survey.getDescription(), survey.getConfirmation());
 		
@@ -182,7 +182,7 @@ class SurveyControllerTests {
 		survey.setTitle(validTitle);
 		survey.setDescription("description");
 		survey.setConfirmation("It is good");
-		doThrow(Exception.class).when(surveyService).addSurveyFromFile(any(), any(), any(), any());	
+		when(surveyService.addSurveyFromFile(any(), any(), any(), any())).thenReturn(Mono.empty());	
 		
 		Mono<ResponseEntity<Object>> response = surveyController
 				.addSurveyFromFile(filePartFlux, survey.getTitle(), survey.getDescription(), survey.getConfirmation());

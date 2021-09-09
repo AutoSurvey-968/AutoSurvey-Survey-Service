@@ -46,10 +46,17 @@ public class SurveyController {
 	@PostMapping(consumes = "multipart/form-data")
 	public Mono<ResponseEntity<Object>> addSurveyFromFile(
 			@RequestPart("file") Flux<FilePart> fileFlux,
-			@RequestPart("name") String name, 
+			@RequestPart("title") String title, 
 			@RequestPart("description") String desc, 
 			@RequestPart("confirmation") String confirm) {
-		return null;
+			return surveyService.addSurveyFromFile(fileFlux, title, desc, confirm).defaultIfEmpty(emptySurvey)
+					.map(survey -> {
+						if (survey.equals(emptySurvey)) {
+							return ResponseEntity.badRequest().build();
+						}
+						return ResponseEntity.status(HttpStatus.CREATED).body(survey);
+					});
+		
 	}
 
 	@GetMapping("{id}")

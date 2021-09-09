@@ -25,4 +25,5 @@ public interface SurveyService {
 	Mono<Survey> addSurveyFromFile(Flux<FilePart> file, String name, String desc, String confirmation);
 
 	Mono<Survey> getByTitle(String title);
+
 }
