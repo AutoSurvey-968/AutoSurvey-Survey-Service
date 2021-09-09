@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +15,7 @@ import com.revature.autosurvey.surveys.beans.Question;
 import com.revature.autosurvey.surveys.beans.Survey;
 import com.revature.autosurvey.surveys.data.SurveyRepo;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -75,5 +77,10 @@ public class SurveyServiceImp implements SurveyService {
 	public Mono<Map<UUID, String>> getAllSurveyList() {
 		return surveyRepo.findAll().collectMap(Survey::getUuid, Survey::getTitle);
 
+	}
+
+	@Override
+	public Mono<Survey> addSurveyFromFile(Flux<FilePart> file, String name, String desc, String confirmation) {
+		return null;
 	}
 }

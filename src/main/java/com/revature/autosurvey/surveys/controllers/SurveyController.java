@@ -6,18 +6,21 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.revature.autosurvey.surveys.beans.Survey;
 import com.revature.autosurvey.surveys.services.SurveyService;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -30,7 +33,7 @@ public class SurveyController {
 		this.surveyService = surveyService;
 	}
 
-	@PostMapping
+	@PostMapping(consumes = "application/json")
 	public Mono<ResponseEntity<Object>> addSurvey(@RequestBody Survey bodySurvey) {
 		try {
 			return surveyService.addSurvey(bodySurvey).defaultIfEmpty(emptySurvey)
@@ -38,6 +41,15 @@ public class SurveyController {
 		} catch (JsonProcessingException e) {
 			return Mono.just(ResponseEntity.badRequest().build());
 		}
+	}
+	
+	@PostMapping(consumes = "multipart/form-data")
+	public Mono<ResponseEntity<Object>> addSurveyFromFile(
+			@RequestPart("file") Flux<FilePart> fileFlux,
+			@RequestPart("name") String name, 
+			@RequestPart("description") String desc, 
+			@RequestPart("confirmation") String confirm) {
+		return null;
 	}
 
 	@GetMapping("{id}")
