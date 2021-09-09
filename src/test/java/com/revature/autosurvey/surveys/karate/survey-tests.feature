@@ -38,17 +38,10 @@ Then status 201
 And match response contains { uuid: '#present', title: 'This is a second title' }
 
 * def uuid = response.uuid
-* def title = response.title
 
 ## GET /surveys/:id - returns single survey as JSON
 Given path "/" + uuid
 When method GET
-Then status 200
-And match response contains { uuid: '#present', title: 'This is a second title' }
-
-##GET /surveys/title/:title - returns a single survey as JSON
-Given path "/title/" + title
-When method get
 Then status 200
 And match response contains { uuid: '#present', title: 'This is a second title' }
     
