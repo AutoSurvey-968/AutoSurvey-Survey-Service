@@ -22,7 +22,7 @@ public interface SurveyService {
 
 	Mono<Map<UUID, String>> getAllSurveyList();
 	
-	Mono<Survey> addSurveyFromFile(Flux<FilePart> file, String name, String desc, String confirmation);
+	Mono<Survey> addSurveyFromFile(Flux<FilePart> file, String title, String desc, String confirmation);
 
 	Mono<Survey> getByTitle(String title);
 
