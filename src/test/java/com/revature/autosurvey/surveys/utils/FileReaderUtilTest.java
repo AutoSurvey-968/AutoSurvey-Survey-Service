@@ -16,10 +16,10 @@ import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 @ExtendWith(SpringExtension.class)
-public class FileReaderUtilTest {
+class FileReaderUtilTest {
 	
 	@Test
-	public void testReadFile() {
+	void testReadFile() {
 		FilePart filePart = Mockito.mock(FilePart.class);
 		DataBuffer dataBuffer = Mockito.mock(DataBuffer.class);
 		String string = "choices,choices,choices";

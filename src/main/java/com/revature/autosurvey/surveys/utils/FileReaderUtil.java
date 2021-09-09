@@ -8,6 +8,8 @@ import reactor.core.publisher.Flux;
 
 public class FileReaderUtil {
 	
+	private FileReaderUtil() {/* Empty */}
+	
 	
 	public static Flux<String> readFile(FilePart file){
 		return file.content().map(buffer -> {

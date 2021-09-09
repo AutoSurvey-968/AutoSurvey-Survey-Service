@@ -28,7 +28,8 @@ public class SurveyServiceImp implements SurveyService {
 	private SurveyRepo surveyRepo;
 	private ObjectMapper objectMapper;
 	private static final String[] VALID_HEADERS = {"questionType","title","helpText","isRequired","choices","hasOtherOption"};
-
+	private static final String CHOICE_HEADER = "choices";
+	
 	@Autowired
 	public void setSurveyRepo(SurveyRepo surveyRepo) {
 		this.surveyRepo = surveyRepo;
@@ -119,10 +120,8 @@ public class SurveyServiceImp implements SurveyService {
 				}
 				
 				//Ensure that there is a mapping and a value for each
-				for (String header : VALID_HEADERS) {
-					if (quesMap.get(header) == null) {
-						return Mono.empty();
-					}
+				if (!validateHeaders(quesMap)) {
+					return Mono.empty();
 				}
 				
 				//Make sure the mapping is correct
@@ -135,8 +134,8 @@ public class SurveyServiceImp implements SurveyService {
 					ques.setIsRequired(Boolean.valueOf(quesMap.get("isRequired")));
 					
 					//Need to check if choices is null
-					if (quesMap.get("choices") != null && !quesMap.get("choices").isBlank()) {
-						List<String> choiceList = Arrays.asList(quesMap.get("choices").split("//"));
+					if (quesMap.get(CHOICE_HEADER) != null && !quesMap.get(CHOICE_HEADER).isBlank()) {
+						List<String> choiceList = Arrays.asList(quesMap.get(CHOICE_HEADER).split("//"));
 						ques.setChoices(choiceList);
 					}
 					quesList.add(ques);
@@ -149,5 +148,14 @@ public class SurveyServiceImp implements SurveyService {
 			survey.setQuestions(quesList);
 			return addSurvey(survey);
 		}).singleOrEmpty();
+	}
+	
+	private Boolean validateHeaders(Map<String, String> map) {
+		for (String header : VALID_HEADERS) {
+			if (map.get(header) == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
