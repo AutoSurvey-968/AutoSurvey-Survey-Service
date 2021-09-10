@@ -4,10 +4,10 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.sqs.AmazonSQSAsync;
@@ -16,32 +16,27 @@ import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-@EnableAsync
 @Component
 @Scope("prototype")
 public class MessageSender {
 
-	public QueueMessagingTemplate queueMessagingTemplate;
+	public QueueMessagingTemplate qMessagingTemplate;
     public String qname = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
     
-//    @Autowired
-//    public MessageSender() {
-//    	super();
-// //   	queueMessagingTemplate = new QueueMessagingTemplate(AmazonSQSAsyncClientBuilder.standard().build());
-//    }
+    
+    public MessageSender() {
+    	super();
+    }
  
-//    @Autowired
-//    public QueueMessagingTemplate queueMessagingTemplate() {
-//    	return new QueueMessagingTemplate(AmazonSQSAsyncClientBuilder.standard().build());
-//    }
-//    
+    
     @Autowired
-    public void setQueueMessagingTemplate(AmazonSQSAsync sqs) {
-    	this.queueMessagingTemplate = new QueueMessagingTemplate(sqs);
+    public void setQueueMessagingTemplate(QueueMessagingTemplate qmt) {
+    	qMessagingTemplate = qmt;
     }
     
-    public QueueMessagingTemplate getQueueMessagingTemplate() {
-    	return this.queueMessagingTemplate;
+    @Autowired
+    public QueueMessagingTemplate getQueueMessagingTemplate(AmazonSQSAsync sqs) {
+    	return new QueueMessagingTemplate(sqs);
     }
 
     @Async
@@ -57,7 +52,7 @@ public class MessageSender {
         log.debug("Attaching request header (MessageId): " + req_header);
         System.out.println("Attaching request header (MessageId): " + req_header);
 
-        this.queueMessagingTemplate.send(this.qname,     
+        this.qMessagingTemplate.send(this.qname,     
 			     MessageBuilder.withPayload(target)
 			     .setHeader("MessageId", req_header)
 			     .build());

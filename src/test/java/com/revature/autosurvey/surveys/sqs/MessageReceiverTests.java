@@ -38,11 +38,6 @@ public class MessageReceiverTests {
 	private Message<String> message;
 		
 	private Survey empty;
-		
-	@BeforeAll
-	static void beforeAll() {
-		
-	}
 	
 	@BeforeEach
 	void beforeEach() {
@@ -52,7 +47,6 @@ public class MessageReceiverTests {
 				.setHeader("MessageId", req_header)
 				.build();
 		
-		this.empty = new Survey();
 	}
 	
 	@Test
@@ -68,7 +62,6 @@ public class MessageReceiverTests {
 
         Mockito.when(messageHandler.repository.getByUuid(Mockito.any())).thenReturn(Mono.just(empty));
         Mockito.doNothing().when(messageHandler.sender).sendObject(payload, qname, req_header);
-     //   Mockito.doNothing().when(messageHandler.log).debug(Mockito.anyString());
 
         messageHandler.queueListener(message);
         

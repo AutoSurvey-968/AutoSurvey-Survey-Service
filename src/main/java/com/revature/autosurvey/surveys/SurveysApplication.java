@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.ApplicationContext;
 
+import com.revature.autosurvey.surveys.sqs.MessageReceiver;
 import com.revature.autosurvey.surveys.sqs.MessageSender;
 
 
@@ -14,6 +15,8 @@ public class SurveysApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext ctx = SpringApplication.run(SurveysApplication.class, args);
+		MessageReceiver rcvMsg = ctx.getBean(MessageReceiver.class);
+		rcvMsg.getLastReceivedMessage();
 		MessageSender sendMsg = ctx.getBean(MessageSender.class);
 		
 		try {
@@ -21,6 +24,7 @@ public class SurveysApplication {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 }

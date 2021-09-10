@@ -32,6 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
+### MAC OS Folder Attributes ###
+*.DS_Store
+
+### Application Logs ###
+.logs/
+
 ### Truststore ###
 cassandra_truststore.jks
 sf-class2-root.crt

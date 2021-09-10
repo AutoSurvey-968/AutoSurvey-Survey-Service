@@ -28,16 +28,16 @@ public class MessageReceiver {
 	public String destQname = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
 	public MessageSender sender;
 	public List<Message<String>> receivedMsgs; 
-	public Survey empty;
+	public Survey emptySurvey;
 	
 	public SurveyRepo repository;
 	public ObjectMapper mapper;
 
-	@Autowired
+	
 	public MessageReceiver() {
 			super();
 			receivedMsgs = new ArrayList<Message<String>>();
-			empty = new Survey();
+			emptySurvey = new Survey();
 	}
 
 	@Autowired
@@ -74,10 +74,10 @@ public class MessageReceiver {
 		System.out.println("Payload received: " + payload);
 
 		// Query DB with survey ID
-		repository.getByUuid(sid).switchIfEmpty(Mono.just(empty)).map(survey -> {
+		repository.getByUuid(sid).switchIfEmpty(Mono.just(emptySurvey)).map(survey -> {
 			String response = "";
 			
-			// Survey ID from query matches that in request
+			// Check that survey ID from query matches that in request
 			if(sid.equals(survey.getUuid())) {
 				// Send survey info back and return
 		        try {
@@ -99,13 +99,14 @@ public class MessageReceiver {
 	        System.out.println("Posted response to queue: " + response);
 			
 			sender.sendObject(response, destQname, req_header);
-			return Mono.just(empty);
+			return Mono.empty();
 		}).subscribe();
 	}
 
 	public Message<String> getLastReceivedMessage() {
 		if(receivedMsgs == null || this.receivedMsgs.size() == 0) {
 			log.debug("No messages have been received");
+			System.out.println("No messages have been received");
 			return null;
 		}
 		

@@ -43,7 +43,7 @@ public class MessageSenderTests {
 	
 	@Test
 	void testSendObject() {
-		Mockito.doNothing().when(sender.queueMessagingTemplate).send(qname, this.message);
+		Mockito.doNothing().when(sender.qMessagingTemplate).send(qname, this.message);
 		
 		sender.sendObject(this.message.getPayload(), qname, req_header);
 		
