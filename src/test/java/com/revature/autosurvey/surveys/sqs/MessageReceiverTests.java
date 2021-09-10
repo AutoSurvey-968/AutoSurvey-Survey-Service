@@ -60,7 +60,7 @@ public class MessageReceiverTests {
         messageHandler.setSender(sender);
 
         Mockito.when(messageHandler.repository.getByUuid(Mockito.any())).thenReturn(Mono.just(emptySurvey));
-        Mockito.doNothing().when(messageHandler.sender).sendObject(payload, qname, req_header);
+        Mockito.doNothing().when(messageHandler.getSender()).sendObject(payload, qname, req_header);
 
         messageHandler.queueListener(message);
         

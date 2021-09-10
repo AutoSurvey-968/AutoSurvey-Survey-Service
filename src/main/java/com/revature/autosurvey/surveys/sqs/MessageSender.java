@@ -36,7 +36,9 @@ public class MessageSender {
     @Async
     public void sendObject(String payload, String qname, String req_header) {
         log.debug("sendObject method called.. ");
+        System.out.println("sendObject method called.. ");
         log.debug("Payload received: ", payload);
+        System.out.println("Payload received: " + payload);
         
     	// Use payload input for new request and set MessageID in header to request header
         String target = payload;
@@ -44,6 +46,7 @@ public class MessageSender {
 		
         this.qname = qname == null ? this.qname : qname;
         log.debug("Attaching request header (MessageId): " + req_header);
+        System.out.println("Attaching request header (MessageId): " + req_header);
 
         this.qMessagingTemplate.send(this.qname,     
 			     MessageBuilder.withPayload(target)
@@ -51,5 +54,6 @@ public class MessageSender {
 			     .build());
 
 		log.debug("sending payload: " + target + "\nDestination Queue: " + this.qname);
+		System.out.println("sending payload: " + target + "\nDestination Queue: " + this.qname);
     }
 }

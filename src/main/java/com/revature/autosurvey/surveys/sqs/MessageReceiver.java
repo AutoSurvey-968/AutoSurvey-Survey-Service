@@ -8,6 +8,8 @@ import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
+import org.json.*;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.autosurvey.surveys.beans.Survey;
@@ -20,11 +22,11 @@ import reactor.core.publisher.Mono;
 @Component
 public class MessageReceiver {
 	
-	public final String qname = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
-	public String destQname = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
-	public MessageSender sender;
-	public Message<String> lastReceived; 
-	public Survey emptySurvey;
+	public final static String qname = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
+	private String destQname = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
+	private MessageSender sender;
+	private Message<String> lastReceived; 
+	private Survey emptySurvey;
 	
 	public SurveyRepo repository;
 	public ObjectMapper mapper;
@@ -50,26 +52,68 @@ public class MessageReceiver {
 		this.mapper = mapper;
 	}
 	
+	public String getDestQname() {
+		return destQname;
+	}
+
+	public void setDestQname(String destQname) {
+		this.destQname = destQname;
+	}
+
+	public Message<String> getLastReceived() {
+		return lastReceived;
+	}
+
+	public void setLastReceived(Message<String> lastReceived) {
+		this.lastReceived = lastReceived;
+	}
+
+	public MessageSender getSender() {
+		return sender;
+	}
+
+	public SurveyRepo getRepository() {
+		return repository;
+	}
+
+	public ObjectMapper getMapper() {
+		return mapper;
+	}
+
 	@SqsListener(value= qname, deletionPolicy=SqsMessageDeletionPolicy.ON_SUCCESS)
 	public void queueListener(Message<String> message) {		
 		log.debug("Survey Queue listener invoked");
+		System.out.println("Survey Queue listener invoked");
 
 		log.debug("Headers received: {}", message.getHeaders());
+		System.out.println("Headers received: " + message.getHeaders());
 		String req_header = message.getHeaders().get("MessageId").toString();
     	log.debug("Message ID Received: {}", req_header);
+    	System.out.println("Message ID Received: " + req_header);
     	
     	String payload = message.getPayload();
+		log.debug("Payload received: ", payload);
+		System.out.println("Payload received: " + payload);
+		
+    	// Parse JSON payload and extract target survey ID from message
+    	String sid = "";
     	
-    	// Extract target survey ID from received message
-		UUID sid = UUID.fromString(payload);
-		log.debug("Payload received: " + payload);
+		try {
+	    	JSONObject obj = new JSONObject(payload);
+			System.out.println("Survey ID received: " + obj.getString("surveyUuid"));
+			sid = obj.getString("surveyUuid");
+		} catch (JSONException e1) {
+			log.error(e1);
+		}
+    	
+		UUID uid = UUID.fromString(sid);
 
 		// Query DB with survey ID
-		repository.getByUuid(sid).switchIfEmpty(Mono.just(emptySurvey)).map(survey -> {
+		repository.getByUuid(uid).switchIfEmpty(Mono.just(emptySurvey)).map(survey -> {
 			String response = "";
 			
 			// Check that survey ID from query matches that in request
-			if(sid.equals(survey.getUuid())) {
+			if(uid.equals(survey.getUuid())) {
 				// Send survey info back and return
 		        try {
 		        	response = mapper.writeValueAsString(survey);
@@ -80,12 +124,14 @@ public class MessageReceiver {
 				}			
 		        
 		        log.debug("Posted response to queue: {}", response);
+		        System.out.println("Posted response to queue: " + response);
 				return Mono.just(survey);
 			}
 			
 			// Survey not found
-			response = "Survey ID: " + sid + " not found";
+			response = "Survey ID: " + uid + " not found";
 	        log.debug("Posted response to queue: {}", response);
+	        System.out.println("Posted response to queue: " + response);
 			
 			sender.sendObject(response, destQname, req_header);
 			return Mono.empty();
