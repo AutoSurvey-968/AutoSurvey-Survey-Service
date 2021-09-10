@@ -1,19 +1,25 @@
 package com.revature.autosurvey.surveys.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.autosurvey.surveys.beans.Question;
+import com.revature.autosurvey.surveys.beans.QuestionType;
 import com.revature.autosurvey.surveys.beans.Survey;
 import com.revature.autosurvey.surveys.data.SurveyRepo;
+import com.revature.autosurvey.surveys.utils.FileReaderUtil;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -21,7 +27,10 @@ public class SurveyServiceImp implements SurveyService {
 
 	private SurveyRepo surveyRepo;
 	private ObjectMapper objectMapper;
-
+	private static final String CHOICE_HEADER = "choices";
+	private static final String[] VALID_HEADERS = {"questionType","title","helpText","isRequired",CHOICE_HEADER,"hasOtherOption"};
+	
+	
 	@Autowired
 	public void setSurveyRepo(SurveyRepo surveyRepo) {
 		this.surveyRepo = surveyRepo;
@@ -88,6 +97,66 @@ public class SurveyServiceImp implements SurveyService {
 
 	public Mono<Map<UUID, String>> getAllSurveyList() {
 		return surveyRepo.findAll().collectMap(Survey::getUuid, Survey::getTitle);
+	}
 
+	@Override
+	public Mono<Survey> addSurveyFromFile(Flux<FilePart> file, String title, String desc, String confirmation) {
+		return file.flatMap(FileReaderUtil::readFile).flatMap(s -> {
+			String[] values = s.split("\\r?\\n");
+			String[] headers = values[0].split(",");
+			
+			Survey survey = new Survey();
+			survey.setTitle(title);
+			survey.setDescription(desc);
+			survey.setConfirmation(confirmation);
+			
+			List<Question> quesList = new ArrayList<>();
+			//Iterate over each row in the CSV
+			for (int i = 1; i < values.length; i++) {
+				String[] quesString = values[i].split(",");
+				Map<String, String> quesMap = new HashMap<>();
+				//Iterate over each part of the choice in the row
+				for (int j = 0; j < quesString.length; j++) {
+					quesMap.put(headers[j], quesString[j]);
+				}
+				
+				//Ensure that there is a mapping and a value for each
+				if (Boolean.FALSE.equals(validateHeaders(quesMap))) {
+					return Mono.empty();
+				}
+				
+				//Make sure the mapping is correct
+				try {
+					Question ques = new Question();
+					ques.setTitle(quesMap.get("title"));
+					ques.setHasOtherOption(Boolean.valueOf(quesMap.get("hasOtherOption")));
+					ques.setQuestionType(QuestionType.valueOf(quesMap.get("questionType")));
+					ques.setHelpText(quesMap.get("helpText"));
+					ques.setIsRequired(Boolean.valueOf(quesMap.get("isRequired")));
+					
+					//Need to check if choices is null
+					if (quesMap.get(CHOICE_HEADER) != null && !quesMap.get(CHOICE_HEADER).isBlank()) {
+						List<String> choiceList = Arrays.asList(quesMap.get(CHOICE_HEADER).split("//"));
+						ques.setChoices(choiceList);
+					}
+					quesList.add(ques);
+				} catch (Exception e) {
+					return Mono.empty();
+				}
+				
+			}
+			
+			survey.setQuestions(quesList);
+			return addSurvey(survey);
+		}).singleOrEmpty();
+	}
+	
+	private Boolean validateHeaders(Map<String, String> map) {
+		for (String header : VALID_HEADERS) {
+			if (map.get(header) == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

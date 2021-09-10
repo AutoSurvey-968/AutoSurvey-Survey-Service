@@ -3,6 +3,7 @@ package com.revature.autosurvey.surveys.controllers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,12 +18,14 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.revature.autosurvey.surveys.beans.Survey;
 import com.revature.autosurvey.surveys.services.SurveyService;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -149,5 +152,42 @@ class SurveyControllerTests {
 		Mono<ResponseEntity<Survey>> result = surveyController.editSurvey(validUuid, survey);
 		
 		StepVerifier.create(result).expectNext(ResponseEntity.ok(survey)).verifyComplete();
+	}
+	
+	@Test
+	void testAddSurveyFromFileValid() {
+		//Need to create a fake FilePart
+		FilePart filePart = Mockito.mock(FilePart.class);
+		Flux<FilePart> filePartFlux = Flux.just(filePart);
+		Survey survey = new Survey();
+		
+		survey.setTitle(validTitle);
+		survey.setDescription("description");
+		survey.setConfirmation("It is good");
+		when(surveyService.addSurveyFromFile(filePartFlux, survey.getTitle(), survey.getDescription(), survey.getConfirmation()))
+				.thenReturn(Mono.just(survey));
+		
+		Mono<ResponseEntity<Object>> response = surveyController.addSurveyFromFile(filePartFlux, survey.getTitle(), survey.getDescription(), survey.getConfirmation());
+		
+		StepVerifier.create(response).expectNext(ResponseEntity.status(HttpStatus.CREATED).body(survey));
+	}
+	
+	@Test
+	void testAddSurveyFromFileInvalid() {
+		//Need to create a fake FilePart
+		FilePart filePart = Mockito.mock(FilePart.class);
+		Flux<FilePart> filePartFlux = Flux.just(filePart);
+		Survey survey = new Survey();
+		
+		survey.setTitle(validTitle);
+		survey.setDescription("description");
+		survey.setConfirmation("It is good");
+		when(surveyService.addSurveyFromFile(any(), any(), any(), any())).thenReturn(Mono.empty());	
+		
+		Mono<ResponseEntity<Object>> response = surveyController
+				.addSurveyFromFile(filePartFlux, survey.getTitle(), survey.getDescription(), survey.getConfirmation());
+		
+		StepVerifier.create(response).expectNext(ResponseEntity.badRequest().build());
+				
 	}
 }
