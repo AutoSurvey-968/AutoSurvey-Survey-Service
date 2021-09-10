@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -37,7 +36,7 @@ public class MessageReceiverTests {
 	
 	private Message<String> message;
 		
-	private Survey empty;
+	private Survey emptySurvey;
 	
 	@BeforeEach
 	void beforeEach() {
@@ -46,7 +45,7 @@ public class MessageReceiverTests {
 		this.message = MessageBuilder.withPayload(payload)
 				.setHeader("MessageId", req_header)
 				.build();
-		
+		emptySurvey = new Survey();
 	}
 	
 	@Test
@@ -60,7 +59,7 @@ public class MessageReceiverTests {
         messageHandler.setSurveyService(repo);
         messageHandler.setSender(sender);
 
-        Mockito.when(messageHandler.repository.getByUuid(Mockito.any())).thenReturn(Mono.just(empty));
+        Mockito.when(messageHandler.repository.getByUuid(Mockito.any())).thenReturn(Mono.just(emptySurvey));
         Mockito.doNothing().when(messageHandler.sender).sendObject(payload, qname, req_header);
 
         messageHandler.queueListener(message);
