@@ -16,18 +16,18 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class MessageSender {
 
-	private QueueMessagingTemplate qMessagingTemplate;
-    private String qname = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
+	private QueueMessagingTemplate queueMessagingTemplate;
+    private String queueName = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
     
     @Autowired
     public MessageSender(AmazonSQSAsync sqs) {
     	super();
-    	this.qMessagingTemplate = new QueueMessagingTemplate(sqs);
+    	this.queueMessagingTemplate = new QueueMessagingTemplate(sqs);
     }
     
     @Autowired
     public QueueMessagingTemplate getQueueMessagingTemplate() {
-    	return this.qMessagingTemplate;
+    	return this.queueMessagingTemplate;
     }
     
     @Autowired
@@ -37,30 +37,29 @@ public class MessageSender {
     
     @Autowired
     public void setQueueMessagingTemplate(AmazonSQSAsync sqs) {
-    	this.qMessagingTemplate = new QueueMessagingTemplate(sqs);
+    	this.queueMessagingTemplate = new QueueMessagingTemplate(sqs);
     }
 
     @Async
     public void sendObject(String payload, String qname, String req_header) {
         log.debug("sendObject method called.. ");
-        System.out.println("sendObject method called.. ");
         log.debug("Payload received: ", payload);
-        System.out.println("Payload received: " + payload);
         
     	// Use payload input for new request and set MessageID in header to request header
         String target = payload;
+        
+        // Header should not be null since it is extracted from request header 
+        // however, if it is then attach new message ID
         req_header = req_header == null ? UUID.randomUUID().toString() : req_header;
 		
-        this.qname = qname == null ? this.qname : qname;
+        this.queueName = qname == null ? this.queueName : qname;
         log.debug("Attaching request header (MessageId): " + req_header);
-        System.out.println("Attaching request header (MessageId): " + req_header);
 
-        this.qMessagingTemplate.send(this.qname,     
+        this.queueMessagingTemplate.send(this.queueName,     
 			     MessageBuilder.withPayload(target)
 			     .setHeader("MessageId", req_header)
 			     .build());
 
-		log.debug("sending payload: " + target + "\nDestination Queue: " + this.qname);
-		System.out.println("sending payload: " + target + "\nDestination Queue: " + this.qname);
+		log.debug("sending payload: " + target + "\nDestination Queue: " + this.queueName);
     }
 }
