@@ -135,7 +135,7 @@ public class SurveyServiceImp implements SurveyService {
 					ques.setIsRequired(Boolean.valueOf(quesMap.get("isRequired")));
 					
 					//Need to check if choices is null
-					if (quesMap.get(CHOICE_HEADER) != null && !quesMap.get(CHOICE_HEADER).isBlank()) {
+					if (quesMap.get(CHOICE_HEADER) != null && !quesMap.get(CHOICE_HEADER).trim().equals("")) {
 						List<String> choiceList = Arrays.asList(quesMap.get(CHOICE_HEADER).split("//"));
 						ques.setChoices(choiceList);
 					}
