@@ -9,17 +9,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+import com.amazonaws.services.sqs.AmazonSQSAsync;
 
 class MessageSenderTests {
 	
 	@InjectMocks
 	private MessageSender sender;
+
+	@Mock
+	private QueueMessagingTemplate qmt;
 	
 	@Mock
-	private QueueMessagingTemplate queueMessagingTemplate;
+	private AmazonSQSAsync sqs;
+	
 	
 	private String qname = "TestQueue.aws";
 	private String payload = "TestID9876-5432-10";
@@ -43,12 +49,13 @@ class MessageSenderTests {
 	
 	@Test
 	void testSendObject() {
+		sender.assignQueueMessagingTemplate(qmt);
 		Mockito.doNothing().when(sender.getQueueMessagingTemplate()).send(qname, this.message);
 		
-		sender.sendObject(this.message.getPayload(), qname, req_header);
+		sender.sendObject(message.getPayload(), qname, req_header);
 		
 		assertNotNull(qname);
-		assertNotNull(this.message);
+		assertNotNull(message.getPayload());
 	}
 	
 	

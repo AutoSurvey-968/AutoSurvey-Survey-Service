@@ -99,7 +99,7 @@ public class MessageReceiver {
 		log.debug("Survey Queue listener invoked");
 
 		MessageHeaders headers = message.getHeaders();
-		Object messageId = message.getHeaders().get(MESSAGE_ID);
+		Object messageId = headers.get(MESSAGE_ID);
 		String messageHeader = null;
 		log.debug("Headers received: {}", headers.toString());
 		

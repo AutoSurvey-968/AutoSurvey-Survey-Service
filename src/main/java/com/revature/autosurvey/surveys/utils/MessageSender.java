@@ -19,9 +19,10 @@ public class MessageSender {
 	private QueueMessagingTemplate queueMessagingTemplate;
     private String queueName = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
     
-    
-    public MessageSender() {
+    @Autowired
+    public MessageSender(AmazonSQSAsync sqs) {
     	super();
+    	this.queueMessagingTemplate = new QueueMessagingTemplate(sqs);
     }
     
     @Autowired
@@ -33,6 +34,10 @@ public class MessageSender {
 	public void setQueueMessagingTemplate(AmazonSQSAsync sqs) {
 		this.queueMessagingTemplate = new QueueMessagingTemplate(sqs);
 	}
+    
+    public void assignQueueMessagingTemplate(QueueMessagingTemplate qmt) {
+    	this.queueMessagingTemplate = qmt;
+    }
 
 
 	public String getQueueName() {
