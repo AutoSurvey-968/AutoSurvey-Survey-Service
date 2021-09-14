@@ -46,7 +46,7 @@ public class MessageSender {
 
 
 	@Async
-    public void sendObject(String payload, String qname, String req_header) {
+    public void sendObject(String payload, String qname, String requestHeader) {
         log.debug("sendObject method called.. ");
         log.debug("Payload received: ", payload);
         
@@ -55,16 +55,16 @@ public class MessageSender {
         
         // Header should not be null since it is extracted from request header 
         // however, if it is then attach new message ID
-        req_header = req_header == null ? UUID.randomUUID().toString() : req_header;
+        requestHeader = requestHeader == null ? UUID.randomUUID().toString() : requestHeader;
 		
         this.queueName = qname == null ? this.queueName : qname;
-        log.debug("Attaching request header (MessageId): " + req_header);
+        log.debug("Attaching request header (MessageId): ", requestHeader);
 
         this.queueMessagingTemplate.send(this.queueName,     
 			     MessageBuilder.withPayload(target)
-			     .setHeader("MessageId", req_header)
+			     .setHeader("MessageId", requestHeader)
 			     .build());
 
-		log.debug("sending payload: " + target + "\nDestination Queue: " + this.queueName);
+		log.debug("sending payload: ", target, "\nDestination Queue: ", this.queueName);
     }
 }

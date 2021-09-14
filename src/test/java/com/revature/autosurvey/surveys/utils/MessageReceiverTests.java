@@ -19,7 +19,7 @@ import com.revature.autosurvey.surveys.data.SurveyRepo;
 
 import reactor.core.publisher.Mono;
 
-public class MessageReceiverTests {
+class MessageReceiverTests {
 	
 	@Mock
 	private MessageSender sender;
@@ -49,7 +49,7 @@ public class MessageReceiverTests {
 	}
 	
 	@Test
-    public void receiveMessage_methodAnnotatedWithSqsListenerAnnotation_methodInvokedForIncomingMessage() throws Exception {
+    void receiveMessage_methodAnnotatedWithSqsListenerAnnotation_methodInvokedForIncomingMessage() throws Exception {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("incomingMessageHandler", MessageReceiver.class);
         applicationContext.refresh();

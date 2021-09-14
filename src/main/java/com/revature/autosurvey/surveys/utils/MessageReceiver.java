@@ -20,9 +20,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class MessageReceiver {
 	
-	private final static String QUEUE_NAME = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
-	private final static String DESTINATION_QUEUE = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
-	private final static String MESSAGE_ID = "MessageId";
+	private static final String QUEUE_NAME = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
+	private static final  String DESTINATION_QUEUE = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
+	private static final  String MESSAGE_ID = "MessageId";
 	private MessageSender sender;
 	private Message<String> lastReceived; 
 	private Survey emptySurvey;
@@ -100,7 +100,7 @@ public class MessageReceiver {
 		String messageHeader = null;
 		log.debug("Headers received: {}", message.getHeaders());
 		
-		if(null != message.getHeaders().get("MessageId")) {
+		if(null != message.getHeaders().get(MESSAGE_ID)) {
 			messageHeader = message.getHeaders().get(MESSAGE_ID).toString();
 	    	log.debug("Message ID Received: {}", messageHeader);
 		}
@@ -157,7 +157,6 @@ public class MessageReceiver {
 	public Message<String> getLastReceivedMessage() {
 		if(lastReceived == null) {
 			log.debug("No messages have been received");
-			System.out.println("No messages have been received");
 			return null;
 		}
 		

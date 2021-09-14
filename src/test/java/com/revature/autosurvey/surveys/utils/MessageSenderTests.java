@@ -13,7 +13,7 @@ import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
-public class MessageSenderTests {
+class MessageSenderTests {
 	
 	@InjectMocks
 	private MessageSender sender;
