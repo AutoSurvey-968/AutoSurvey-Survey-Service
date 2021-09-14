@@ -92,7 +92,17 @@ public class SurveyServiceImp implements SurveyService {
 	@Override
 
 	public Mono<Survey> editSurvey(Survey bodySurvey) {
-		return surveyRepo.save(bodySurvey);
+		try {
+			List<String> list = new ArrayList<>();
+			for (Question question : bodySurvey.getQuestions()) {
+				list.add(objectMapper.writeValueAsString(question));
+			}
+			bodySurvey.setMappedQuestions(list);
+			return surveyRepo.save(bodySurvey);
+		} catch (JsonProcessingException e) {
+			return Mono.empty();
+		}
+		
 	}
 
 	public Mono<Map<UUID, String>> getAllSurveyList() {
