@@ -1,6 +1,8 @@
 package com.revature.autosurvey.surveys.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.UUID;
 
@@ -30,9 +32,9 @@ class MessageReceiverTests {
 	@Mock
 	private SurveyRepo repo;
 	
-	private String qname = "TestQueue.aws";
 	private String payload = UUID.randomUUID().toString();
-	private String req_header = "1234-5678-901";
+	private String requestHeader = "1234-5678-901";
+	private String response = "Survey ID: " + payload + " not found";
 	
 	private Message<String> message;
 		
@@ -43,13 +45,13 @@ class MessageReceiverTests {
 		MockitoAnnotations.openMocks(this);
 		
 		this.message = MessageBuilder.withPayload(payload)
-				.setHeader("MessageId", req_header)
+				.setHeader("MessageId", requestHeader)
 				.build();
 		emptySurvey = new Survey();
 	}
 	
 	@Test
-    void receiveMessage_methodAnnotatedWithSqsListenerAnnotation_methodInvokedForIncomingMessage() throws Exception {
+    void testQueueListener() {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("incomingMessageHandler", MessageReceiver.class);
         applicationContext.refresh();
@@ -60,12 +62,38 @@ class MessageReceiverTests {
         messageHandler.setSender(sender);
 
         Mockito.when(messageHandler.getRepository().getByUuid(Mockito.any())).thenReturn(Mono.just(emptySurvey));
-        Mockito.doNothing().when(messageHandler.getSender()).sendObject(payload, qname, req_header);
+        Mockito.doNothing().when(messageHandler.getSender()).
+        sendObject(payload, MessageReceiver.getDestinationQueue(), requestHeader);
+
+        messageHandler.queueListener(message);
+        
+        Mockito.verify(messageHandler.getRepository()).getByUuid(UUID.fromString(payload));
+        verify(messageHandler.getSender(), times(1)).
+        sendObject(response, MessageReceiver.getDestinationQueue(), requestHeader);
+        applicationContext.close();
+    }
+	
+	@Test
+	void testGetLastReceivedMessage() {
+        StaticApplicationContext applicationContext = new StaticApplicationContext();
+        applicationContext.registerSingleton("incomingMessageHandler", MessageReceiver.class);
+        applicationContext.refresh();
+        
+
+        MessageReceiver messageHandler = applicationContext.getBean(MessageReceiver.class);
+        messageHandler.setRepository(repo);
+        messageHandler.setSender(sender);
+
+        Mockito.when(messageHandler.getRepository().
+        		getByUuid(Mockito.any())).thenReturn(Mono.just(emptySurvey));
+        
+        Mockito.doNothing().when(messageHandler.getSender()).
+        sendObject(payload, MessageReceiver.getDestinationQueue(), requestHeader);
 
         messageHandler.queueListener(message);
         
         assertEquals(message, messageHandler.getLastReceivedMessage());
         
         applicationContext.close();
-    }
+	}
 }
