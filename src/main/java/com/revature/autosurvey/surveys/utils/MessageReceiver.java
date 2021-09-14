@@ -20,9 +20,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class MessageReceiver {
 	
-	private final static String queueName = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
-	private final static String destinationQueue = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
-	private final static String messageId = "MessageId";
+	private final static String QUEUE_NAME = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
+	private final static String DESTINATION_QUEUE = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
+	private final static String MESSAGE_ID = "MessageId";
 	private MessageSender sender;
 	private Message<String> lastReceived; 
 	private Survey emptySurvey;
@@ -39,32 +39,10 @@ public class MessageReceiver {
 	public MessageSender getSender() {
 		return sender;
 	}
-	
+
 	@Autowired
 	public void setSender(MessageSender sender) {
 		this.sender = sender;
-	}
-
-	public SurveyRepo getRepository() {
-		return repository;
-	}
-	
-	@Autowired
-	public void setSurveyService(SurveyRepo repository) {
-		this.repository = repository;
-	}
-
-	public ObjectMapper getMapper() {
-		return mapper;
-	}
-	
-	@Autowired
-	public void setObjectMapper(ObjectMapper mapper) {
-		this.mapper = mapper;
-	}
-	
-	public String getDestQname() {
-		return destinationQueue;
 	}
 
 	public Message<String> getLastReceived() {
@@ -76,7 +54,46 @@ public class MessageReceiver {
 	}
 
 
-	@SqsListener(value= queueName, deletionPolicy=SqsMessageDeletionPolicy.ON_SUCCESS)
+	public Survey getEmptySurvey() {
+		return emptySurvey;
+	}
+
+	public void setEmptySurvey(Survey emptySurvey) {
+		this.emptySurvey = emptySurvey;
+	}
+
+	public SurveyRepo getRepository() {
+		return repository;
+	}
+
+	@Autowired
+	public void setRepository(SurveyRepo repository) {
+		this.repository = repository;
+	}
+
+	public ObjectMapper getMapper() {
+		return mapper;
+	}
+
+	@Autowired
+	public void setMapper(ObjectMapper mapper) {
+		this.mapper = mapper;
+	}
+
+	public static String getQueueName() {
+		return QUEUE_NAME;
+	}
+
+	public static String getDestinationQueue() {
+		return DESTINATION_QUEUE;
+	}
+
+	public static String getMessageId() {
+		return MESSAGE_ID;
+	}
+
+	
+	@SqsListener(value=QUEUE_NAME, deletionPolicy=SqsMessageDeletionPolicy.ON_SUCCESS)
 	public void queueListener(Message<String> message) {		
 		log.debug("Survey Queue listener invoked");
 
@@ -84,7 +101,7 @@ public class MessageReceiver {
 		log.debug("Headers received: {}", message.getHeaders());
 		
 		if(null != message.getHeaders().get("MessageId")) {
-			messageHeader = message.getHeaders().get(messageId).toString();
+			messageHeader = message.getHeaders().get(MESSAGE_ID).toString();
 	    	log.debug("Message ID Received: {}", messageHeader);
 		}
     	
@@ -101,22 +118,22 @@ public class MessageReceiver {
     		log.warn("Invalid UUID");
     		log.error(e);
     		String response = "Invalid UUID";
-			sender.sendObject(response, destinationQueue, messageHeader);
+			sender.sendObject(response, DESTINATION_QUEUE, messageHeader);
 			return;
     	}
 
 		// Query DB with survey ID
-		repository.getByUuid(uid).switchIfEmpty(Mono.just(emptySurvey)).map((survey) -> {
+		repository.getByUuid(uid).switchIfEmpty(Mono.just(emptySurvey)).map(survey -> {
 			String response = "";
-			String responseHeader = message.getHeaders().get(messageId) != null ?
-					message.getHeaders().get(messageId).toString() : null;
+			String responseHeader = message.getHeaders().get(MESSAGE_ID) != null ?
+					message.getHeaders().get(MESSAGE_ID).toString() : null;
 			
 			// Check that survey ID from query matches that in request
 			if(uid.equals(survey.getUuid())) {
 				// Send survey info back and return
 		        try {
 		        	response = mapper.writeValueAsString(survey);
-		        	sender.sendObject(response, destinationQueue, responseHeader);
+		        	sender.sendObject(response, DESTINATION_QUEUE, responseHeader);
 					
 				} catch (JsonProcessingException e) {
 					log.error(e.getMessage());
@@ -130,7 +147,7 @@ public class MessageReceiver {
 			response = "Survey ID: " + uid + " not found";
 	        log.debug("Posted response to queue: {}", response);
 			
-			sender.sendObject(response, destinationQueue, responseHeader);
+			sender.sendObject(response, DESTINATION_QUEUE, responseHeader);
 			return Mono.empty();
 		}).subscribe();
 		

@@ -19,28 +19,33 @@ public class MessageSender {
 	private QueueMessagingTemplate queueMessagingTemplate;
     private String queueName = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
     
-    @Autowired
-    public MessageSender(AmazonSQSAsync sqs) {
+    
+    public MessageSender() {
     	super();
-    	this.queueMessagingTemplate = new QueueMessagingTemplate(sqs);
     }
     
     @Autowired
     public QueueMessagingTemplate getQueueMessagingTemplate() {
-    	return this.queueMessagingTemplate;
-    }
-    
-    @Autowired
-    public QueueMessagingTemplate QueueMessagingTemplate(AmazonSQSAsync sqs) {
-    	return new QueueMessagingTemplate(sqs);
-    }
-    
-    @Autowired
-    public void setQueueMessagingTemplate(AmazonSQSAsync sqs) {
-    	this.queueMessagingTemplate = new QueueMessagingTemplate(sqs);
-    }
+		return queueMessagingTemplate;
+	}
 
-    @Async
+    @Autowired
+	public void setQueueMessagingTemplate(AmazonSQSAsync sqs) {
+		this.queueMessagingTemplate = new QueueMessagingTemplate(sqs);
+	}
+
+
+	public String getQueueName() {
+		return queueName;
+	}
+
+
+	public void setQueueName(String queueName) {
+		this.queueName = queueName;
+	}
+
+
+	@Async
     public void sendObject(String payload, String qname, String req_header) {
         log.debug("sendObject method called.. ");
         log.debug("Payload received: ", payload);
