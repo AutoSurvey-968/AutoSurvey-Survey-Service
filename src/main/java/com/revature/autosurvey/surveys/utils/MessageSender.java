@@ -1,4 +1,4 @@
-package com.revature.autosurvey.surveys.sqs;
+package com.revature.autosurvey.surveys.utils;
 
 import java.util.UUID;
 
