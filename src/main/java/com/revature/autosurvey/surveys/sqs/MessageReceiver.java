@@ -8,8 +8,6 @@ import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
-import org.json.*;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.autosurvey.surveys.beans.Survey;
@@ -22,14 +20,14 @@ import reactor.core.publisher.Mono;
 @Component
 public class MessageReceiver {
 	
-	public final static String qname = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
-	private String destQname = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
+	private final static String qname = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
+	private final static String destQName = "https://sqs.us-east-1.amazonaws.com/855430746673/AnalyticsQueue";
 	private MessageSender sender;
 	private Message<String> lastReceived; 
 	private Survey emptySurvey;
 	
-	public SurveyRepo repository;
-	public ObjectMapper mapper;
+	private SurveyRepo repository;
+	private ObjectMapper mapper;
 
 	
 	public MessageReceiver() {
@@ -53,11 +51,7 @@ public class MessageReceiver {
 	}
 	
 	public String getDestQname() {
-		return destQname;
-	}
-
-	public void setDestQname(String destQname) {
-		this.destQname = destQname;
+		return destQName;
 	}
 
 	public Message<String> getLastReceived() {
@@ -85,39 +79,46 @@ public class MessageReceiver {
 		log.debug("Survey Queue listener invoked");
 		System.out.println("Survey Queue listener invoked");
 
+		String messageHeader = null;
 		log.debug("Headers received: {}", message.getHeaders());
 		System.out.println("Headers received: " + message.getHeaders());
-		String req_header = message.getHeaders().get("MessageId").toString();
-    	log.debug("Message ID Received: {}", req_header);
-    	System.out.println("Message ID Received: " + req_header);
+		
+		if(null != message.getHeaders().get("MessageId")) {
+			messageHeader = message.getHeaders().get("MessageId").toString();
+	    	log.debug("Message ID Received: {}", messageHeader);
+	    	System.out.println("Message ID Received: " + messageHeader);
+		}
     	
     	String payload = message.getPayload();
 		log.debug("Payload received: ", payload);
 		System.out.println("Payload received: " + payload);
 		
-    	// Parse JSON payload and extract target survey ID from message
-    	String sid = "";
-    	
-		try {
-	    	JSONObject obj = new JSONObject(payload);
-			System.out.println("Survey ID received: " + obj.getString("surveyUuid"));
-			sid = obj.getString("surveyUuid");
-		} catch (JSONException e1) {
-			log.error(e1);
-		}
-    	
-		UUID uid = UUID.fromString(sid);
+    	// Extract target survey ID from message
+    	String sid = message.getPayload();
+    	UUID uid;
+    	try {
+    		uid = UUID.fromString(sid);
+    	}
+    	catch(Exception e) {
+    		log.warn("Invalid UUID");
+    		log.error(e);
+    		String response = "Invalid UUID";
+			sender.sendObject(response, destQName, messageHeader);
+			return;
+    	}
 
 		// Query DB with survey ID
-		repository.getByUuid(uid).switchIfEmpty(Mono.just(emptySurvey)).map(survey -> {
+		repository.getByUuid(uid).switchIfEmpty(Mono.just(emptySurvey)).map((survey) -> {
 			String response = "";
+			String responseHeader = message.getHeaders().get("MessageId") != null ?
+					message.getHeaders().get("MessageId").toString() : null;
 			
 			// Check that survey ID from query matches that in request
 			if(uid.equals(survey.getUuid())) {
 				// Send survey info back and return
 		        try {
 		        	response = mapper.writeValueAsString(survey);
-		        	sender.sendObject(response, destQname, req_header);
+		        	sender.sendObject(response, destQName, responseHeader);
 					
 				} catch (JsonProcessingException e) {
 					log.error(e.getMessage());
@@ -133,7 +134,7 @@ public class MessageReceiver {
 	        log.debug("Posted response to queue: {}", response);
 	        System.out.println("Posted response to queue: " + response);
 			
-			sender.sendObject(response, destQname, req_header);
+			sender.sendObject(response, destQName, responseHeader);
 			return Mono.empty();
 		}).subscribe();
 		

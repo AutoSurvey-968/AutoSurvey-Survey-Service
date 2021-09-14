@@ -16,21 +16,28 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class MessageSender {
 
-	public QueueMessagingTemplate qMessagingTemplate;
-    public String qname = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
+	private QueueMessagingTemplate qMessagingTemplate;
+    private String qname = "https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue";
     
-    public MessageSender() {
+    @Autowired
+    public MessageSender(AmazonSQSAsync sqs) {
     	super();
+    	this.qMessagingTemplate = new QueueMessagingTemplate(sqs);
     }
     
     @Autowired
-    public void setQueueMessagingTemplate(QueueMessagingTemplate qmt) {
-    	qMessagingTemplate = qmt;
+    public QueueMessagingTemplate getQueueMessagingTemplate() {
+    	return this.qMessagingTemplate;
     }
     
     @Autowired
-    public QueueMessagingTemplate getQueueMessagingTemplate(AmazonSQSAsync sqs) {
+    public QueueMessagingTemplate QueueMessagingTemplate(AmazonSQSAsync sqs) {
     	return new QueueMessagingTemplate(sqs);
+    }
+    
+    @Autowired
+    public void setQueueMessagingTemplate(AmazonSQSAsync sqs) {
+    	this.qMessagingTemplate = new QueueMessagingTemplate(sqs);
     }
 
     @Async

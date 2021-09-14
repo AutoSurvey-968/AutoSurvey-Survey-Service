@@ -19,7 +19,7 @@ public class AwsSQSConfig {
     @Value("${cloud.aws.region:us-east-1}")
     private String awsRegion;
 
-    @Bean
+    @Bean("AmazonSQSAsync")
     @Primary
     public AmazonSQSAsync amazonSQSAsync() {
         return AmazonSQSAsyncClientBuilder.standard()
@@ -34,6 +34,7 @@ public class AwsSQSConfig {
     }
 
     @Bean
+    @Primary
     public QueueMessagingTemplate queueMessagingTemplate() {
         return new QueueMessagingTemplate(amazonSQSAsync());
     }
