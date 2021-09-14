@@ -93,14 +93,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
-			<!-- Exclusions for default logback-classic. Uncomment for log.debug statements 
-				with log4j2 -->
-			<!-- <exclusions> -->
-			<!-- <exclusion> -->
-			<!-- <groupId>org.springframework.boot</groupId> -->
-			<!-- <artifactId>spring-boot-starter-logging</artifactId> -->
-			<!-- </exclusion> -->
-			<!-- </exclusions> -->
+		<!-- Comment out exclusions to use logback-classic and avoid noisy debug statements -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

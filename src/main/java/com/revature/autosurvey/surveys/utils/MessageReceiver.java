@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.listener.SqsMessageDeletionPolicy;
 import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -97,11 +98,13 @@ public class MessageReceiver {
 	public void queueListener(Message<String> message) {		
 		log.debug("Survey Queue listener invoked");
 
+		MessageHeaders headers = message.getHeaders();
+		Object messageId = message.getHeaders().get(MESSAGE_ID);
 		String messageHeader = null;
-		log.debug("Headers received: {}", message.getHeaders());
+		log.debug("Headers received: {}", headers.toString());
 		
-		if(null != message.getHeaders().get(MESSAGE_ID)) {
-			messageHeader = message.getHeaders().get(MESSAGE_ID).toString();
+		if(messageId != null) {
+			messageHeader = messageId.toString();
 	    	log.debug("Message ID Received: {}", messageHeader);
 		}
     	
