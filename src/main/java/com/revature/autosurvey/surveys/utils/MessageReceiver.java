@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.listener.SqsMessageDeletionPolicy;
 import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -80,24 +79,22 @@ public class MessageReceiver {
 	public void queueListener(Message<String> message) {		
 		log.debug("Survey's queue listener invoked");
 
-		Object headers_Mid = message.getHeaders().get(MESSAGE_ID);
+		Object headersMID = message.getHeaders().get(MESSAGE_ID);
 		String messageId = null;
 		
-		if(headers_Mid != null) {
-			messageId = (String) headers_Mid;
-		}
-		
+		if(headersMID != null) {
+			messageId = (String) headersMID;
+		}	
 		log.debug("Message ID Received from Headers: ", messageId);
 
     	// Extract target survey ID from message and remove extra quotes
-    	String sid = message.getPayload().replaceAll(("^\"+|\"+$"), (""));
+    	String sid = message.getPayload().replaceAll("\"", "");
 		log.debug("Payload received: ", sid);
     	
 		UUID uid;
     	try {
     		uid = UUID.fromString(sid);
-    	}
-    	catch(Exception e) {
+    	} 	catch(Exception e) {
     		log.warn("Invalid UUID: " + message.getPayload());
     		log.error(e);
     		String response = "Invalid UUID: " + message.getPayload();
@@ -128,7 +125,7 @@ public class MessageReceiver {
 			
 			// Survey not found
 			response = "Survey ID: " + uid + " not found";
-	        log.debug("Posted response to queue: {}", response);
+	        log.debug("Posted response to queue: ", response);
 			
 			sender.sendObject(response, DESTINATION_QUEUE, responseHeader);
 			return Mono.empty();
