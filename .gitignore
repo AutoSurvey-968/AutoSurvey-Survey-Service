@@ -32,6 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
+### MacOs Directory Metadata ###
+.DS_Store
+
+### App Logs ###
+/logs
+
 ### Truststore ###
 cassandra_truststore.jks
 sf-class2-root.crt
