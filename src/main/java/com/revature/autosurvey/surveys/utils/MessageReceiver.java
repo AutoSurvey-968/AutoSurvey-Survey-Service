@@ -38,7 +38,7 @@ public class MessageReceiver {
 	}
 
 	public MessageSender getSender() {
-		return sender;
+		return this.sender;
 	}
 
 	@Autowired
@@ -47,6 +47,10 @@ public class MessageReceiver {
 	}
 
 	public Message<String> getLastReceived() {
+		if(lastReceived == null) {
+			log.debug("No messages have been received");
+		}
+		
 		return lastReceived;
 	}
 
@@ -64,7 +68,7 @@ public class MessageReceiver {
 	}
 
 	public SurveyRepo getRepository() {
-		return repository;
+		return this.repository;
 	}
 
 	@Autowired
@@ -96,32 +100,30 @@ public class MessageReceiver {
 	
 	@SqsListener(value=QUEUE_NAME, deletionPolicy=SqsMessageDeletionPolicy.ON_SUCCESS)
 	public void queueListener(Message<String> message) {		
-		log.debug("Survey Queue listener invoked");
+		log.debug("Survey's queue listener invoked");
 
 		MessageHeaders headers = message.getHeaders();
-		Object messageId = headers.get(MESSAGE_ID);
-		String messageHeader = null;
-		log.debug("Headers received: {}", headers.toString());
+		String messageId = null;
 		
-		if(messageId != null) {
-			messageHeader = messageId.toString();
-	    	log.debug("Message ID Received: {}", messageHeader);
+		if(message.getHeaders().get(MESSAGE_ID) != null) {
+			messageId = headers.get(MESSAGE_ID).toString();
 		}
-    	
-    	String payload = message.getPayload();
-		log.debug("Payload received: ", payload);
 		
-    	// Extract target survey ID from message
-    	String sid = message.getPayload();
-    	UUID uid;
+		log.debug("Message ID Received from Headers: ", messageId);
+
+    	// Extract target survey ID from message and remove extra quotes
+    	String sid = message.getPayload().replaceAll("^\"+|\"+$", "");
+		log.debug("Payload received: ", sid);
+    	
+		UUID uid;
     	try {
     		uid = UUID.fromString(sid);
     	}
     	catch(Exception e) {
-    		log.warn("Invalid UUID");
+    		log.warn("Invalid UUID: " + message.getPayload());
     		log.error(e);
-    		String response = "Invalid UUID";
-			sender.sendObject(response, DESTINATION_QUEUE, messageHeader);
+    		String response = "Invalid UUID: " + message.getPayload();
+			sender.sendObject(response, DESTINATION_QUEUE, messageId);
 			return;
     	}
 
@@ -155,15 +157,6 @@ public class MessageReceiver {
 		}).subscribe();
 		
 		lastReceived = message;
-	}
-
-	public Message<String> getLastReceivedMessage() {
-		if(lastReceived == null) {
-			log.debug("No messages have been received");
-			return null;
-		}
-		
-		return lastReceived;
 	}
 	
 }
