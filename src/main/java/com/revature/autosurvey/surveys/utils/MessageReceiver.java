@@ -47,37 +47,16 @@ public class MessageReceiver {
 	}
 
 	public Message<String> getLastReceived() {
-		if(lastReceived == null) {
-			log.debug("No messages have been received");
-		}
-		
 		return lastReceived;
-	}
-
-	public void setLastReceived(Message<String> lastReceived) {
-		this.lastReceived = lastReceived;
-	}
-
-
-	public Survey getEmptySurvey() {
-		return emptySurvey;
-	}
-
-	public void setEmptySurvey(Survey emptySurvey) {
-		this.emptySurvey = emptySurvey;
-	}
-
-	public SurveyRepo getRepository() {
-		return this.repository;
 	}
 
 	@Autowired
 	public void setRepository(SurveyRepo repository) {
 		this.repository = repository;
 	}
-
-	public ObjectMapper getMapper() {
-		return mapper;
+	
+	public SurveyRepo getRepository() {
+		return this.repository;
 	}
 
 	@Autowired
@@ -96,23 +75,22 @@ public class MessageReceiver {
 	public static String getMessageId() {
 		return MESSAGE_ID;
 	}
-
 	
 	@SqsListener(value=QUEUE_NAME, deletionPolicy=SqsMessageDeletionPolicy.ON_SUCCESS)
 	public void queueListener(Message<String> message) {		
 		log.debug("Survey's queue listener invoked");
 
-		MessageHeaders headers = message.getHeaders();
+		Object headers_Mid = message.getHeaders().get(MESSAGE_ID);
 		String messageId = null;
 		
-		if(message.getHeaders().get(MESSAGE_ID) != null) {
-			messageId = headers.get(MESSAGE_ID).toString();
+		if(headers_Mid != null) {
+			messageId = (String) headers_Mid;
 		}
 		
 		log.debug("Message ID Received from Headers: ", messageId);
 
     	// Extract target survey ID from message and remove extra quotes
-    	String sid = message.getPayload().replaceAll("^\"+|\"+$", "");
+    	String sid = message.getPayload().replaceAll(("^\"+|\"+$"), (""));
 		log.debug("Payload received: ", sid);
     	
 		UUID uid;
