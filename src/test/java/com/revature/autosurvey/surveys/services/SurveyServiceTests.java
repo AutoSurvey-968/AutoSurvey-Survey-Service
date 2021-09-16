@@ -84,6 +84,16 @@ class SurveyServiceTests {
 	}
 	
 	@Test
+	void testGetByTitle() throws JsonMappingException, JsonProcessingException {
+		doReturn(Mono.just(survey1)).when(repoMock).getByTitle(survey1.getTitle());
+		doReturn(ques1).when(objMapMock).readValue(mapQues1, Question.class);
+		
+		Survey result= ssi.getByTitle(survey1.getTitle()).block();
+		assertEquals(id1, result.getUuid());
+		assertEquals(ques1, result.getQuestions().get(0));
+	}
+	
+	@Test
 	void testDeleteByUuid() {
 		
 		doReturn(Mono.just(true)).when(repoMock).deleteByUuid(id1);
@@ -344,6 +354,6 @@ class SurveyServiceTests {
 		verifyNoInteractions(repoMock);
 	}
 	
-
+	
 	
 }
