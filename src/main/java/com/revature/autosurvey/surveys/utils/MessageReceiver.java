@@ -88,7 +88,7 @@ public class MessageReceiver {
 		log.debug("Message ID Received from Headers: ", messageId);
 
     	// Extract target survey ID from message and remove extra quotes
-    	String sid = message.getPayload().replaceAll("\"", "");
+    	String sid = message.getPayload().replace("\"", "");
 		log.debug("Payload received: ", sid);
     	
 		UUID uid;
