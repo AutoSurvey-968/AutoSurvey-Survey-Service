@@ -1,6 +1,6 @@
 ### Messaging Queues for Surveys SQS ###
-Used for decoupling interactions between Analytics, Surveys, Submissions and
-the repository.
+Used for decoupling interactions between Analytics --> Surveys & Submissions with
+DB access.
 
 ## Features and Usage (Backend) ##
 * Analytics can initiate a request to Surveys by wrapping a Survey UUID in a message and sending to the Survey Queue on AWS (https://sqs.us-east-1.amazonaws.com/855430746673/SurveyQueue).
@@ -20,6 +20,7 @@ the repository.
 * SERVICE_ACCOUNT_ID
 * SQS_PASS
 * SQS_USER
+* TRUSTSTORE_PASS
 
 Notes by: Stephen G (2107 Reactive Batch)
 Date: 9/15/2021
